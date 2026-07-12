@@ -1,0 +1,55 @@
+data_utils.py
+  h_89bc17edd88fde 8
+  s_0ffbda3597dbc5::t_f59ac6f3146c70 9
+VQVAE/main.py
+  s_eb49a10a264f0e::t_8418d804135d76 21
+  h_89bc17edd88fde 39 gitai:{"mixed_line_ranges":[{"Single":39}],"operations":[]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "29abebf702489f02fb9f70a323fe0af3b0b425bf",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_0ffbda3597dbc5": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-ec074fed-eb0a-4e94-9383-c3edc126ecd0",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_eb49a10a264f0e": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-2c8dd482-9f59-478e-b8d9-8ab1d708d429",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {
+    "VQVAE/main.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 39
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 39
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
