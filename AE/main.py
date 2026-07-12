@@ -118,7 +118,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 128
     EPOCHS = 3
     LEARNING_RATE = 1e-3
-    LATENT_DIM = 20  # 潜在空间维度
+    LATENT_DIM = 32  # 潜在空间维度
     INPUT_DIM = 784  # 28x28
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
@@ -127,16 +127,16 @@ if __name__ == '__main__':
     print("Running on %s" % DEVICE)
     print("=" * 60)
     
-    ae_model = AutoEncoder().to(DEVICE)
+    ae_model = AutoEncoder(INPUT_DIM, LATENT_DIM).to(DEVICE)
     ae_optimizer = optim.Adam(ae_model.parameters(), lr=LEARNING_RATE)
     train_loader, test_loader = get_mnist_dataloader(BATCH_SIZE)
 
     ae_losses = []
     for epoch in range(1, EPOCHS + 1):
-        loss = train_ae(ae_model, train_loader, ae_optimizer, epoch)
+        loss = train_ae(ae_model, train_loader, INPUT_DIM, ae_optimizer, epoch, DEVICE)
         ae_losses.append(loss)
 
-    test_ae(ae_model, test_loader)
+    test_ae(ae_model, test_loader, INPUT_DIM, DEVICE)
 
     # AE 可视化
     visualize_reconstruction(ae_model, test_loader, "AE")
