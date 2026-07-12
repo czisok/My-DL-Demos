@@ -7,7 +7,7 @@ with open("global_set.json", "r") as f:
     config = json.load(f)
 DATA_ROOT_PATH = config['data_root']  # 自定义数据集根路径
 
-print("*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10)
+print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
 
 def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
     transform = transforms.Compose([
