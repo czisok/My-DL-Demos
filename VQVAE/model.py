@@ -1,8 +1,14 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class VectorQuantizer(nn.Module):
+    """
+        向量量化器: 用于将输入向量量化为离散值，通过最小化与码本中最近邻的距离来实现。
+        commitment_cost: 用于平衡量化误差和码本更新的权重
+        返回量化损失： || sg(z_e(x)) - z_q(x) ||^2 + \beta|| z_e((x) - sg(z_q(x)) ||^2
+    """
     def __init__(self, num_embeddings, embedding_dim, commitment_cost):
         super(VectorQuantizer, self).__init__()
 
@@ -42,8 +48,7 @@ class VectorQuantizer(nn.Module):
             - 2 * torch.matmul(flat_input, self._embedding.weight.t())
         )
         # Encoding
-        encoding_indices = torch.argmin(
-            distances, dim=1).unsqueeze(1)  # [B*H*W, 1]
+        encoding_indices = torch.argmin(distances, dim=1).unsqueeze(1)  # [B*H*W, 1]
         # print(encoding_indices)
         encodings = torch.zeros(
             encoding_indices.shape[0], self._num_embeddings, device=inputs.device
@@ -184,6 +189,13 @@ class VectorQuantizerEMA(nn.Module):
 
 
 class Residual(nn.Module):
+    """
+        残差卷积: (x -> relu -> conv -> relu -> conv) + x
+    Args:
+        in_channels (int): 输入通道数
+        num_hiddens (int): 隐藏通道数
+        num_residual_hiddens (int): 残差通道数
+    """
     def __init__(self, in_channels, num_hiddens, num_residual_hiddens):
         super(Residual, self).__init__()
         self._block = nn.Sequential(
@@ -211,9 +223,10 @@ class Residual(nn.Module):
 
 
 class ResidualStack(nn.Module):
-    def __init__(
-        self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens
-    ):
+    """
+        残差栈: 由多个残差卷积层组成
+    """
+    def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(ResidualStack, self).__init__()
         self._num_residual_layers = num_residual_layers
         self._layers = nn.ModuleList(
@@ -230,6 +243,9 @@ class ResidualStack(nn.Module):
 
 
 class Encoder(nn.Module):
+    """
+        编码器: 由多个残差卷积层组成, x->conv1->relu->conv2->relu->conv3->residual_stack->z_e
+    """
     def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(Encoder, self).__init__()
 
@@ -262,6 +278,9 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
+    """
+        解码器: 由多个残差卷积层组成, z_e->conv_trans1->relu->conv_trans2->relu->conv_trans3->x
+    """
     def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(Decoder, self).__init__()
 
