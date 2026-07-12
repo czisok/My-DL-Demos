@@ -1,0 +1,220 @@
+VQVAE/main.py
+  h_89bc17edd88fde 35-39,42-43,89-90,110-116,118,120-125 gitai:{"mixed_line_ranges":[{"Range":[42,43]}],"operations":[]}
+  s_f540a962744b89::t_5fab0fb8e78e16 44
+  s_6150dde7cc3103::t_0ebac7f0f997f6 45
+  s_6150dde7cc3103::t_fab3a27f4a6a8d 46
+VQVAE/model_2.py
+  h_89bc17edd88fde 16,33-35 gitai:{"mixed_line_ranges":[{"Single":16}],"operations":[]}
+VQVAE/model.py
+  s_03d2f789dd1359::t_48223ea9127b3b 325
+  s_9aeaca1f55e23f::t_d442bffc2f83fc 290
+  h_89bc17edd88fde 309
+  s_c04b38c91d29f2::t_fbd077c3415dee 338
+  s_9aeaca1f55e23f::t_bb578eefa8c3b1 289
+  s_c04b38c91d29f2::t_c1b54a1b7fb2bb 336-337
+data_utils.py
+  s_23bde56415ccd2::t_310d59c8ae5ff2 6
+  s_ac88924b466507::t_14ebd65d6a3df8 27
+  h_89bc17edd88fde 24-25 gitai:{"mixed_line_ranges":[{"Range":[24,25]}],"operations":[]}
+  s_07fd48791a5a71::t_093a98d6182c12 22,29
+  s_a0f63881698ff0::t_2d98a2c6bc955b 33
+  s_1bff7d12c5eccc::t_c28c3d69c3a8a7 28
+  s_f69b34ad08a7f6::t_1abac3e65162c5 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fbb56b66b22c3bfcbcaa0f5b955e92cb42ab1457",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_03d2f789dd1359": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-08b220e8-36a8-4c4b-b335-b36f051c65b1",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_07fd48791a5a71": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-e05f4775-7236-4186-9126-8f86c94b577b",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_1bff7d12c5eccc": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-4a985df6-9193-423c-9a2f-baa1e9972236",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_23bde56415ccd2": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-326a6e3f-94e3-4a5b-ab1a-570bc6019230",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_6150dde7cc3103": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-479f9280-4d09-4d54-b6b8-1ad18418bd7d",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_9aeaca1f55e23f": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-6b6a5346-4bf8-4443-ab06-7fb04ca0849e",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_a0f63881698ff0": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-ce3ed0f8-6aea-4092-8dd6-d02f5245b6ec",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_ac88924b466507": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-6df6e41b-f11f-4356-8f6d-8526f1c7bd6e",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_c04b38c91d29f2": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-2f4aa2c4-dcf4-4041-896c-64f8fbc0fc24",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f540a962744b89": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-63f6d22d-3f77-49df-af3b-e1546218a7e9",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f69b34ad08a7f6": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-8bf17b5a-b76d-42bd-8be3-f2d63ae0f714",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {
+    "VQVAE/main.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Range": [
+              35,
+              39
+            ]
+          },
+          {
+            "Range": [
+              42,
+              43
+            ]
+          },
+          {
+            "Range": [
+              89,
+              90
+            ]
+          },
+          {
+            "Range": [
+              110,
+              116
+            ]
+          },
+          {
+            "Single": 118
+          },
+          {
+            "Range": [
+              120,
+              125
+            ]
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Range": [
+              42,
+              43
+            ]
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "VQVAE/model_2.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 16
+          },
+          {
+            "Range": [
+              33,
+              35
+            ]
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 16
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "data_utils.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Range": [
+              24,
+              25
+            ]
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Range": [
+              24,
+              25
+            ]
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
