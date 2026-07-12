@@ -12,7 +12,9 @@ import time
 
 
 class ResidualBlock(nn.Module):
-
+    """
+    残差卷积: x -> ReLU -> Conv -> ReLU -> Conv + x -> out
+    """
     def __init__(self, dim):
         super().__init__()
         self.relu = nn.ReLU()
@@ -28,7 +30,9 @@ class ResidualBlock(nn.Module):
 
 
 class VQVAEModelV2(nn.Module):
-
+    """
+        简易版 VQVAE
+    """
     def __init__(self, input_dim, dim, n_embedding):
         super().__init__()
         self.encoder = nn.Sequential(
@@ -55,7 +59,6 @@ class VQVAEModelV2(nn.Module):
     def forward(self, x):
         # encode
         ze = self.encoder(x)
-
         # ze: [N, C, H, W]
         # embedding [K, C]
         embedding = self.vq_embedding.weight.data
@@ -100,48 +103,6 @@ class VQVAEModelV2(nn.Module):
         C, H, W = input_shape
         return (H // 2**self.n_downsample, W // 2**self.n_downsample)
 
-
-# def train_vqvae(
-#     model,
-#     dataloader,
-#     device="cuda",
-#     ckpt_path="./",
-#     batch_size=64,
-#     lr=1e-3,
-#     n_epochs=100,
-#     l_w_embedding=1,
-#     l_w_commitment=0.25,
-# ):
-#     print("batch size:", batch_size)
-#     # mnist_dataset = MNISTImageDataset("../dataset/mnist/mnist_torch/")
-#     # dataloader = DataLoader(mnist_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
-#     model.to(device)
-#     model.train()
-#     optimizer = torch.optim.Adam(model.parameters(), lr)
-#     mse_loss = nn.MSELoss()
-#     tic = time.time()
-#     for e in range(n_epochs):
-#         total_loss = 0
-#         for x, _ in dataloader:
-#             current_batch_size = x.shape[0]
-#             x = x.to(device)
-
-#             x_hat, ze, zq = model(x)
-#             l_reconstruct = mse_loss(x, x_hat)
-#             l_embedding = mse_loss(ze.detach(), zq)
-#             l_commitment = mse_loss(ze, zq.detach())
-#             loss = l_reconstruct + l_w_embedding * l_embedding + l_w_commitment * l_commitment
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
-#             total_loss += loss.item() * current_batch_size
-#         total_loss /= len(dataloader.dataset)
-#         toc = time.time()
-#         torch.save(model.state_dict(), ckpt_path)
-#         print(f"epoch {e} loss: {total_loss} elapsed {(toc - tic):.2f}s")
-#     print("Done")
-
-
 def reconstruct(model, x, device, dataset_type='MNIST'):
     model.to(device)
     model.eval()
@@ -157,12 +118,7 @@ def reconstruct(model, x, device, dataset_type='MNIST'):
     cv2.imwrite(f'work_dirs/vqvae_reconstruct_{dataset_type}.jpg', x_cat)
 
 
-def sample_imgs(vqvae,
-                gen_model,
-                img_shape,
-                n_sample=81,
-                device='cuda',
-                dataset_type='MNIST'):
+def sample_imgs(vqvae, gen_model, img_shape, n_sample=81, device='cuda', dataset_type='MNIST'):
     vqvae = vqvae.to(device)
     vqvae.eval()
     gen_model = gen_model.to(device)
