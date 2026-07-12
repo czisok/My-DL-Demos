@@ -2,8 +2,10 @@
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import numpy as np
-
-DATA_ROOT_PATH = './dataset/'  # 自定义数据集根路径
+import json
+with open("global_set.json", "r") as f:
+    config = json.load(f)
+DATA_ROOT_PATH = config['data_root']  # 自定义数据集根路径
 
 
 def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
