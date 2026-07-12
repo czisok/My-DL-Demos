@@ -7,6 +7,9 @@ import torch.optim as optim
 from my_utils import plt
 from data_utils import get_mnist_dataloader
 from AE.model import AutoEncoder
+import os
+
+
 
 def train_ae(model, train_loader, input_dim, optimizer, epoch, device):
     model.train()
@@ -46,11 +49,11 @@ def test_ae(model, test_loader, input_dim, device):
 # ============================================================
 # 可视化函数
 # ============================================================
-def visualize_reconstruction(model, test_loader, input_dim, model_name, device, n=10):
+def visualize_reconstruction(model, test_loader, input_dim, model_name, device, dir="./", n=10):
     """可视化原始图像和重建图像的对比"""
     model.eval()
-    data, _ = next(iter(test_loader))
-    data = data[:n].to(device)
+    data, _ = next(iter(test_loader))  # 取测试集的第一个批次
+    data = data[:n].to(device)  # 取前n个样本
 
     with torch.no_grad():
         data_flat = data.view(-1, input_dim)
@@ -73,14 +76,14 @@ def visualize_reconstruction(model, test_loader, input_dim, model_name, device, 
         if i == 0:
             axes[1, i].set_title("Reconstructed", fontsize=10)
 
-    plt.suptitle(f"{model_name} - Reconstruction Results", fontsize=14)
+    plt.suptitle(f"{dir}/{model_name} - Reconstruction Results", fontsize=14)
     plt.tight_layout()
-    plt.savefig(f"{model_name}_reconstruction.png", dpi=150, bbox_inches='tight')
+    plt.savefig(f"{dir}/{model_name}_reconstruction.png", dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"Saved: {model_name}_reconstruction.png")
+    print(f"Saved: {dir}/{model_name}_reconstruction.png")
 
 
-def visualize_latent_space(model, test_loader, input_dim, model_name, device):
+def visualize_latent_space(model, test_loader, input_dim, model_name, device, dir="./"):
     """可视化潜在空间（取前两个维度）"""
     model.eval()
     latents = []
@@ -106,27 +109,33 @@ def visualize_latent_space(model, test_loader, input_dim, model_name, device):
     plt.colorbar(scatter, label='Digit Class')
     plt.xlabel('Latent Dimension 1')
     plt.ylabel('Latent Dimension 2')
-    plt.title(f'{model_name} - Latent Space Visualization (first 2 dims)')
-    plt.savefig(f"{model_name}_latent_space.png", dpi=150, bbox_inches='tight')
+    plt.title(f'{dir}/{model_name} - Latent Space Visualization (first 2 dims)')
+    plt.savefig(f"{dir}/{model_name}_latent_space.png", dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"Saved: {model_name}_latent_space.png")
+    print(f"Saved: {dir}/{model_name}_latent_space.png")
+
 
 if __name__ == '__main__':
     # =========================================================================
     # 超惨设置
     # =========================================================================
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
+    # res_dir = os.path.join(script_dir, 'work_dirs')
+    # os.makedirs(res_dir, exist_ok=True)
+    
     BATCH_SIZE = 128
-    EPOCHS = 3
+    EPOCHS = 10
     LEARNING_RATE = 1e-3
     LATENT_DIM = 32  # 潜在空间维度
     INPUT_DIM = 784  # 28x28
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+
     print("\n" + "=" * 60)
     print("Training Auto-Encoder (AE)")
     print("Running on %s" % DEVICE)
     print("=" * 60)
-    
+
     ae_model = AutoEncoder(INPUT_DIM, LATENT_DIM).to(DEVICE)
     ae_optimizer = optim.Adam(ae_model.parameters(), lr=LEARNING_RATE)
     train_loader, test_loader = get_mnist_dataloader(BATCH_SIZE)
@@ -139,5 +148,5 @@ if __name__ == '__main__':
     test_ae(ae_model, test_loader, INPUT_DIM, DEVICE)
 
     # AE 可视化
-    visualize_reconstruction(ae_model, test_loader, "AE")
-    visualize_latent_space(ae_model, test_loader, "AE")
+    visualize_reconstruction(ae_model, test_loader, INPUT_DIM, "AE", DEVICE, script_dir)
+    visualize_latent_space(ae_model, test_loader, INPUT_DIM, "AE", DEVICE, script_dir)

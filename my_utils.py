@@ -25,7 +25,7 @@ plt.rcParams["font.family"] = font_name
 plt.rcParams["axes.unicode_minus"] = False
 """
 
-plt.rcParams["font.family"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"] # 字体可调换
+plt.rcParams["font.family"] = ["Heiti TC"] # 字体可调换
 plt.rcParams["axes.unicode_minus"] = False # 解决负号"-"显示方框问题
 
 def show_image(img_path, title="img", figsize=None):

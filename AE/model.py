@@ -28,6 +28,11 @@ class AutoEncoder(nn.Module):
         )
 
     def forward(self, x):
+        """
+        Returns:
+            x_recon: 重建的输入
+            z: 潜在空间表示
+        """
         z = self.encoder(x)
         x_recon = self.decoder(z)
         return x_recon, z
