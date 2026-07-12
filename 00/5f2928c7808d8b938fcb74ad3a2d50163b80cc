@@ -1,0 +1,37 @@
+.gitignore
+  s_7fa3368176fe67::t_fbab6007c81094 25
+  h_89bc17edd88fde 30
+  s_b2f3e5e2fa68fe::t_9727a29e2d3eeb 29
+  s_7fa3368176fe67::t_b44ba80fea35e8 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "005f2928c7808d8b938fcb74ad3a2d50163b80cc",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_7fa3368176fe67": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-2efdee3d-bf68-40b8-a097-9bd72d831de3",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_b2f3e5e2fa68fe": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7f8074df-447b-4f1a-b08d-3b23b7959499",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
