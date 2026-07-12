@@ -1,0 +1,326 @@
+VQVAE/model_2.py
+  h_89bc17edd88fde 3,6-9,13,30,104-127,129-215,217-223,225-226 gitai:{"mixed_line_ranges":[{"Single":106},{"Range":[197,198]}],"operations":[]}
+  s_c1ec28d230bed4::t_ca91ef7249dbcb 10
+VQVAE/main.py
+  s_8a70c7f2f0f16d::t_a62509fee1f86b 116
+  s_e4933538567999::t_a2c22d02e941cb 112 gitai:{"mixed_line_ranges":[{"Single":112}],"operations":[]}
+  h_89bc17edd88fde 7-9,13-14,25,27,41-82,88,103,111,115,118 gitai:{"mixed_line_ranges":[{"Single":111},{"Single":115},{"Single":118}],"operations":[]}
+  s_01786d425b1608::t_b6771ae19dfee0 26
+  s_8d9c89d4e86498::t_66a20e6443f73d 114
+  s_f9dd009cf22217::t_703842aaf87669 113
+  s_28d2584bfe5bf3::t_9b42e1f8ccf72c 105
+  s_eddf1c8b092a12::t_59c9fe23b2e0c4 10
+  s_d89d627c0d4066::t_0f5a85d218f294 11-12
+  s_218c4c55a5a30a::t_47ec9a81d566a5 5
+  s_d30a833cdad1c1::t_143fb434e59b4e 108
+VQVAE/model.py
+  s_be5f029ecc1367::t_17a5baa8c7984e 7,11
+  s_26be67b6a60a78::t_ab12089e326879 247
+  s_30ed32bb3763ea::t_5efbdaf50f0ed2 226-228
+  s_0fb1818f2c912c::t_b100b95a317f63 8-9
+  s_05364f40d80b8a::t_921ed3297f58ee 246,248
+  s_f4b245ffbc45b3::t_b443af35b75d28 192,198,281-283
+  h_89bc17edd88fde 10,193 gitai:{"mixed_line_ranges":[{"Single":193}],"operations":[]}
+  s_30ed32bb3763ea::t_92a5ecb2223196 229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "06e214b3ec2345ab80e3e3eb97c933c66cef5037",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_01786d425b1608": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-dc92565a-b4fa-47cf-821f-29bc1b535d6f",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_05364f40d80b8a": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-6ee943f5-810b-4052-b653-aabcc72ed603",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_0fb1818f2c912c": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-fe876f10-2d59-4eeb-8a84-bdffbfff9258",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_218c4c55a5a30a": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7955692a-9c14-4448-a07d-b197a54c1917",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_26be67b6a60a78": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-0a0d16b0-84ea-48c5-b59a-b5e969e705ca",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_28d2584bfe5bf3": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-5e61174c-11c0-43bb-a7bc-33799f73c1b3",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_30ed32bb3763ea": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-c1ed4813-5b6d-4aaa-867b-927c4ac6342e",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_8a70c7f2f0f16d": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-162acbb0-251a-4555-a81d-47d55ac9e4e2",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_8d9c89d4e86498": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-363267f5-0642-46a2-b2cc-eaf5a6b5cf97",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_be5f029ecc1367": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-b227dad3-ccfa-418e-aaa6-2bbdb6f87e45",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_c1ec28d230bed4": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-860f8244-1ef6-499e-b754-627a1875694e",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_d30a833cdad1c1": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-ea3c3219-ebd8-4713-84e0-0c8ffa8e95ac",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_d89d627c0d4066": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-5fb67732-d81f-4d22-964a-89d1bfdc463d",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_e4933538567999": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-f50083aa-aac7-43ed-9ef7-a8161a360d58",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_eddf1c8b092a12": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7b4ea665-34b6-4350-88a5-7a21cbf634db",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f4b245ffbc45b3": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-1a4b67b8-770e-4670-ba4f-b7c44269478b",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f9dd009cf22217": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-8333bc68-4d32-4737-bb74-0edd1d6f9a58",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {
+    "VQVAE/main.py": [
+      {
+        "hash": "s_e4933538567999::t_a2c22d02e941cb",
+        "line_ranges": [
+          {
+            "Single": 112
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 112
+          }
+        ],
+        "operations": []
+      },
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Range": [
+              7,
+              9
+            ]
+          },
+          {
+            "Range": [
+              13,
+              14
+            ]
+          },
+          {
+            "Single": 25
+          },
+          {
+            "Single": 27
+          },
+          {
+            "Range": [
+              41,
+              82
+            ]
+          },
+          {
+            "Single": 88
+          },
+          {
+            "Single": 103
+          },
+          {
+            "Single": 111
+          },
+          {
+            "Single": 115
+          },
+          {
+            "Single": 118
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 111
+          },
+          {
+            "Single": 115
+          },
+          {
+            "Single": 118
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "VQVAE/model.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 10
+          },
+          {
+            "Single": 193
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 193
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "VQVAE/model_2.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              6,
+              9
+            ]
+          },
+          {
+            "Single": 13
+          },
+          {
+            "Single": 30
+          },
+          {
+            "Range": [
+              104,
+              127
+            ]
+          },
+          {
+            "Range": [
+              129,
+              215
+            ]
+          },
+          {
+            "Range": [
+              217,
+              223
+            ]
+          },
+          {
+            "Range": [
+              225,
+              226
+            ]
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 106
+          },
+          {
+            "Range": [
+              197,
+              198
+            ]
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
