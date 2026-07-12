@@ -1,0 +1,26 @@
+data_utils.py
+  s_08b30db738f62b::t_bcae78f9007e83 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dbef20faed88a227f018859b4de0526398dd274f",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_08b30db738f62b": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-32a47ff7-3e0d-40b5-872b-6ccf18637a75",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
