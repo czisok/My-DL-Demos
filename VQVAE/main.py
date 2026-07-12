@@ -18,8 +18,8 @@ def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
     train_res_perplexity = []
 
     for i in range(epoch):
+        s_time = time.time()
         for idx, (data, _) in enumerate(train_loader):
-
             # (data, _) = next(iter(train_loader))  # 由于样本量太大，此处仅训练第一个batch
             data = data.to(device)
             optimizer.zero_grad()
@@ -31,11 +31,12 @@ def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
 
             train_res_recon_error.append(recon_error.item())
             train_res_perplexity.append(perplexity.item())
-        
-        print('epoch %d, recon_error %.5f, perplexity: %.5f' % (
+        e_time = time.time()
+        print('epoch %d, recon_error %.5f, perplexity: %.5f, elapsed %.2f s' % (
                 (i+1),
                 np.mean(train_res_recon_error),
-                np.mean(train_res_perplexity))
+                np.mean(train_res_perplexity),
+                e_time - s_time)
             )
 
         if (i+1) % 100 == 0:

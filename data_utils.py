@@ -5,7 +5,8 @@ import numpy as np
 
 DATA_ROOT_PATH = './dataset/'  # 自定义数据集根路径
 
-def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH):
+
+def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
     transform = transforms.Compose([
         transforms.ToTensor(),  # 将像素值归一化到 [0, 1]
     ])
@@ -17,8 +18,10 @@ def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH):
         root=data_path, train=False, download=True, transform=transform
     )
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(
+        train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(
+        test_dataset, batch_size=batch_size, shuffle=False)
     print("=" * 60)
     print("data loader info: ")
     print("data_type:".ljust(40, " ") + "MNIST")
@@ -38,11 +41,15 @@ def get_cifar10_dataloader(batch_size, data_path=DATA_ROOT_PATH+"cifar10/"):
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (1.0, 1.0, 1.0))
     ])
-    training_data = datasets.CIFAR10(root=data_path, train=True, download=True, transform=transform)
-    validation_data = datasets.CIFAR10(root=data_path, train=False, download=True, transform=transform)
+    training_data = datasets.CIFAR10(
+        root=data_path, train=True, download=True, transform=transform)
+    validation_data = datasets.CIFAR10(
+        root=data_path, train=False, download=True, transform=transform)
 
     data_variance = np.var(training_data.data / 255.0)
     print("training_data varianc %.6f" % data_variance)
-    training_loader = DataLoader(training_data, batch_size=batch_size,  shuffle=True, pin_memory=True)
-    validation_loader = DataLoader(validation_data, batch_size=32, shuffle=True, pin_memory=True)
+    training_loader = DataLoader(
+        training_data, batch_size=batch_size,  shuffle=True, pin_memory=True)
+    validation_loader = DataLoader(
+        validation_data, batch_size=32, shuffle=True, pin_memory=True)
     return training_loader, validation_loader, data_variance
