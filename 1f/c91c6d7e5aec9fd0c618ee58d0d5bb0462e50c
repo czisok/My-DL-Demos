@@ -1,0 +1,47 @@
+VQVAE/model.py
+  s_8528f48a9e0e6d::t_d51b7a55fc932f 2
+  h_89bc17edd88fde 3-229
+  s_8528f48a9e0e6d::t_646e83184c3334 1
+my_utils.py
+  h_89bc17edd88fde 6-13,15-16,18,21,26
+data_utils.py
+  h_89bc17edd88fde 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1fc91c6d7e5aec9fd0c618ee58d0d5bb0462e50c",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_8528f48a9e0e6d": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-f442cecb-e31d-4c5d-a7b8-9d8e17ff5870",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {
+    "s_8171255b026682": {
+      "tool": "trae",
+      "conversation_id": "6a50a614843ff31463c51f59",
+      "session_id": "6a50a614843ff31463c51f59",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_8171255b026682::t_2f2a0413582e91": {
+      "tool": "trae",
+      "conversation_id": "6a50a614843ff31463c51f59",
+      "session_id": "6a50a614843ff31463c51f59",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
