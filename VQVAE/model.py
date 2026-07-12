@@ -9,6 +9,7 @@ class VectorQuantizer(nn.Module):
         commitment_cost: 用于平衡量化误差和码本更新的权重
         返回量化损失： || sg(z_e(x)) - z_q(x) ||^2 + \beta|| z_e((x) - sg(z_q(x)) ||^2
     """
+
     def __init__(self, num_embeddings, embedding_dim, commitment_cost):
         super(VectorQuantizer, self).__init__()
 
@@ -48,7 +49,8 @@ class VectorQuantizer(nn.Module):
             - 2 * torch.matmul(flat_input, self._embedding.weight.t())
         )
         # Encoding
-        encoding_indices = torch.argmin(distances, dim=1).unsqueeze(1)  # [B*H*W, 1]
+        encoding_indices = torch.argmin(
+            distances, dim=1).unsqueeze(1)  # [B*H*W, 1]
         # print(encoding_indices)
         encodings = torch.zeros(
             encoding_indices.shape[0], self._num_embeddings, device=inputs.device
@@ -196,6 +198,7 @@ class Residual(nn.Module):
         num_hiddens (int): 隐藏通道数
         num_residual_hiddens (int): 残差通道数
     """
+
     def __init__(self, in_channels, num_hiddens, num_residual_hiddens):
         super(Residual, self).__init__()
         self._block = nn.Sequential(
@@ -226,6 +229,7 @@ class ResidualStack(nn.Module):
     """
         残差栈: 由多个残差卷积层组成
     """
+
     def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(ResidualStack, self).__init__()
         self._num_residual_layers = num_residual_layers
@@ -246,6 +250,7 @@ class Encoder(nn.Module):
     """
         编码器: 由多个残差卷积层组成, x->conv1->relu->conv2->relu->conv3->residual_stack->z_e
     """
+
     def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(Encoder, self).__init__()
 
@@ -281,7 +286,8 @@ class Decoder(nn.Module):
     """
         解码器: 由多个残差卷积层组成, z_e->conv_trans1->relu->conv_trans2->relu->conv_trans3->x
     """
-    def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
+
+    def __init__(self, in_channels, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
         super(Decoder, self).__init__()
 
         self._conv_1 = nn.Conv2d(in_channels=in_channels,
@@ -300,7 +306,7 @@ class Decoder(nn.Module):
                                                 stride=2, padding=1)
 
         self._conv_trans_2 = nn.ConvTranspose2d(in_channels=num_hiddens//2,
-                                                out_channels=3,
+                                                out_channels=out_channels,
                                                 kernel_size=4,
                                                 stride=2, padding=1)
 
@@ -316,16 +322,20 @@ class Decoder(nn.Module):
 
 
 class VQVAEModel(nn.Module):
-    def __init__(self, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay=0):
+    def __init__(self, input_dim, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay=0):
         super(VQVAEModel, self).__init__()
 
-        self._encoder = Encoder(3, num_hiddens, num_residual_layers, num_residual_hiddens)
-        self._pre_vq_conv = nn.Conv2d(in_channels=num_hiddens, out_channels=embedding_dim, kernel_size=1, stride=1)
+        self._encoder = Encoder(input_dim, num_hiddens,
+                                num_residual_layers, num_residual_hiddens)
+        self._pre_vq_conv = nn.Conv2d(
+            in_channels=num_hiddens, out_channels=embedding_dim, kernel_size=1, stride=1)
         if decay > 0.0:
-            self._vq_vae = VectorQuantizerEMA(num_embeddings, embedding_dim, commitment_cost, decay)
+            self._vq_vae = VectorQuantizerEMA(
+                num_embeddings, embedding_dim, commitment_cost, decay)
         else:
-            self._vq_vae = VectorQuantizer(num_embeddings, embedding_dim, commitment_cost)
-        self._decoder = Decoder(embedding_dim, num_hiddens, num_residual_layers, num_residual_hiddens)
+            self._vq_vae = VectorQuantizer(
+                num_embeddings, embedding_dim, commitment_cost)
+        self._decoder = Decoder(embedding_dim, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens)
 
     def forward(self, x):
         z = self._encoder(x)
