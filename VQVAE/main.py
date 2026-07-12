@@ -11,6 +11,28 @@ import einops
 import cv2
 import numpy as np
 
+import argparse
+
+import json
+
+def parse_args():
+    # 1. 创建参数解析器
+    parser = argparse.ArgumentParser(description="这是一个参数解析示例")
+
+    # 2. 添加参数（必填/可选、类型、说明、默认值）
+    parser.add_argument("data_root", type=str, default="./", help="data root path")
+
+    # 3. 解析参数
+    args = parser.parse_args()
+    return args
+
+def restet_global_set():
+    args = parse_args()
+    with open("global_set.json", "r") as f:
+        config = json.load(f)
+    config['data_root'] = args.data_root
+    with open("global_set.json", "w") as f:
+        json.dump(config, f, indent=4)
 
 def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
     model.train()
@@ -90,6 +112,7 @@ def reconstruct(model, x, device, dataset_type='MNIST'):
 
 
 if __name__ == '__main__':
+    restet_global_set()
     # =========================================================================
     # 超参数设置
     # =========================================================================
