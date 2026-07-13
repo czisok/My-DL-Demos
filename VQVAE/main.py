@@ -4,7 +4,7 @@ import numpy as np
 from VQVAE.model import VQVAEModel
 from VQVAE.model_2 import VQVAEModelV2
 import torch.optim as optim
-from data_utils import get_cifar10_dataloader, get_mnist_dataloader
+from data_utils import get_cifar10_dataloader, get_mnist_dataloader, DATA_ROOT_PATH, init_data_root
 import time
 import torch.nn as nn
 import einops
@@ -26,8 +26,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def restet_global_set():
-    args = parse_args()
+def restet_global_set(args):
     with open("global_set.json", "r") as f:
         config = json.load(f)
     config['data_root'] = args.data_root
@@ -112,7 +111,8 @@ def reconstruct(model, x, device, dataset_type='MNIST'):
 
 
 if __name__ == '__main__':
-    restet_global_set()
+    args = parse_args()
+    init_data_root(args.data_root)
     # =========================================================================
     # 超参数设置
     # =========================================================================
