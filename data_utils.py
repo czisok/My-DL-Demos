@@ -3,13 +3,24 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import numpy as np
 import json
-with open("global_set.json", "r") as f:
-    config = json.load(f)
-DATA_ROOT_PATH = config['data_root']  # 自定义数据集根路径
 
-print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
+DATA_ROOT_PATH = None
 
-def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
+
+def init_data_root(data_root=None):
+    global DATA_ROOT_PATH
+    if data_root is not None:
+        DATA_ROOT_PATH = data_root
+    else:
+        with open("global_set.json", "r") as f:
+            config = json.load(f)
+        DATA_ROOT_PATH = config['data_root']
+    print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
+
+
+def get_mnist_dataloader(batch_size, data_path=None):
+    if data_path is None:
+        data_path = DATA_ROOT_PATH + "mnist/"
     transform = transforms.Compose([
         transforms.ToTensor(),  # 将像素值归一化到 [0, 1]
     ])
@@ -21,10 +32,8 @@ def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
         root=data_path, train=False, download=True, transform=transform
     )
 
-    train_loader = DataLoader(
-        train_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(
-        test_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     print("=" * 60)
     print("data loader info: ")
     print("data_type:".ljust(40, " ") + "MNIST")
@@ -36,7 +45,9 @@ def get_mnist_dataloader(batch_size, data_path=DATA_ROOT_PATH+"mnist/"):
     return train_loader, test_loader
 
 
-def get_cifar10_dataloader(batch_size, data_path=DATA_ROOT_PATH+"cifar10/"):
+def get_cifar10_dataloader(batch_size, data_path=None):
+    if data_path is None:
+        data_path = DATA_ROOT_PATH + "cifar10/"
     # ToTensor 把数值归一化到[0, 1]之间
     # transforms.Normalize((0.5,0.5,0.5), (1.0,1.0,1.0))
     # out = \frac{x - \mu}{\sigma}, 参数分别是三个通道的均值和方差，这样把x由[0, 1]映射到[-0.5, 0.5]之间，均值为0，加速收敛'
