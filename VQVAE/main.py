@@ -20,7 +20,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="这是一个参数解析示例")
 
     # 2. 添加参数（必填/可选、类型、说明、默认值）
-    parser.add_argument("data_root", type=str, default="./", help="data root path")
+    parser.add_argument("--data_root", type=str, default="./", help="data root path")
 
     # 3. 解析参数
     args = parser.parse_args()
