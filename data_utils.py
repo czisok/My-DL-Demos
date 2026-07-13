@@ -15,6 +15,8 @@ def init_data_root(data_root=None):
         with open("global_set.json", "r") as f:
             config = json.load(f)
         DATA_ROOT_PATH = config['data_root']
+    if not DATA_ROOT_PATH.endswith("/"):
+        DATA_ROOT_PATH += "/"
     print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
 
 
