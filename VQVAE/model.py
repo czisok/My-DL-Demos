@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class VectorQuantizer(nn.Module):
     """
-        向量量化器: 用于将输入向量量化为离散值，通过最小化与码本中最近邻的距离来实现。
+        向量量化器: 用于将输入向量量化为离散值，通过最小化与码本中最近邻的距离来实现。并返回离散值对应的码本emb
         commitment_cost: 用于平衡量化误差和码本更新的权重
         返回量化损失： || sg(z_e(x)) - z_q(x) ||^2 + \beta|| z_e((x) - sg(z_q(x)) ||^2
     """
@@ -36,7 +36,7 @@ class VectorQuantizer(nn.Module):
         flat_input = inputs.view(-1, self._embedding_dim)  # [, H]
         # Calculate distances
         """
-        下面是求距离的常用方法(以下代码涉及张量广播)：
+        下面是求距离的常用方法(以下代码涉及张量广播): 
         aa = torch.sum(flat_input**2, dim=1, keepdim=True) : [B, H] -> [B, 1]
         bb = torch.sum(self._embedding.weight**2, dim=1)   : [N, H] -> [N]
         aa + bb: 1. bb扩维到 [1, N], 2. aa广播为[B, N] (第0维进行广播), bb广播为[B, N] (第1维进行广播)
@@ -183,8 +183,7 @@ class VectorQuantizerEMA(nn.Module):
         # Straight Through Estimator
         quantized = inputs + (quantized - inputs).detach()
         avg_probs = torch.mean(encodings, dim=0)
-        perplexity = torch.exp(-torch.sum(avg_probs *
-                               torch.log(avg_probs + 1e-10)))
+        perplexity = torch.exp(-torch.sum(avg_probs * torch.log(avg_probs + 1e-10)))
 
         # convert quantized from BHWC -> BCHW
         return loss, quantized.permute(0, 3, 1, 2).contiguous(), perplexity, encodings
@@ -325,16 +324,12 @@ class VQVAEModel(nn.Module):
     def __init__(self, input_dim, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay=0):
         super(VQVAEModel, self).__init__()
 
-        self._encoder = Encoder(input_dim, num_hiddens,
-                                num_residual_layers, num_residual_hiddens)
-        self._pre_vq_conv = nn.Conv2d(
-            in_channels=num_hiddens, out_channels=embedding_dim, kernel_size=1, stride=1)
+        self._encoder = Encoder(input_dim, num_hiddens, num_residual_layers, num_residual_hiddens)
+        self._pre_vq_conv = nn.Conv2d(in_channels=num_hiddens, out_channels=embedding_dim, kernel_size=1, stride=1)
         if decay > 0.0:
-            self._vq_vae = VectorQuantizerEMA(
-                num_embeddings, embedding_dim, commitment_cost, decay)
+            self._vq_vae = VectorQuantizerEMA(num_embeddings, embedding_dim, commitment_cost, decay)
         else:
-            self._vq_vae = VectorQuantizer(
-                num_embeddings, embedding_dim, commitment_cost)
+            self._vq_vae = VectorQuantizer(num_embeddings, embedding_dim, commitment_cost)
         self._decoder = Decoder(embedding_dim, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens)
 
     def forward(self, x):
