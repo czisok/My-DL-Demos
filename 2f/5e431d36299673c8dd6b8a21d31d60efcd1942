@@ -1,0 +1,18 @@
+VQVAE/main.py
+  h_89bc17edd88fde 5,15,18-19,26-32,119,139-140,144,146,149,151-154,156-161,163-165
+VQVAE/model.py
+  h_89bc17edd88fde 8,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2f5e431d36299673c8dd6b8a21d31d60efcd1942",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
