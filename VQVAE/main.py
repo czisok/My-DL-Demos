@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 from VQVAE.model import VQVAEModel
-from VQVAE.model_2 import VQVAEModelV2
+from VQVAE.model_simple import VQVAEModelV2
 import torch.optim as optim
 from data_utils import get_cifar10_dataloader, get_mnist_dataloader, DATA_ROOT_PATH, init_data_root
 import time
@@ -10,17 +10,26 @@ import torch.nn as nn
 import einops
 import cv2
 import numpy as np
-
 import argparse
-
 import json
+import os
 
+
+cur_path = os.path.abspath(__file__)
+cur_dir = os.path.dirname(cur_path)
 def parse_args():
     # 1. 创建参数解析器
     parser = argparse.ArgumentParser(description="这是一个参数解析示例")
 
     # 2. 添加参数（必填/可选、类型、说明、默认值）
     parser.add_argument("--data_root", type=str, default="./", help="data root path")
+    parser.add_argument(
+        "--model_version", 
+        type=str, 
+        choices=["v1", "v2"],  
+        default="v1",
+        help="v1, v2-simple model"
+    )
 
     # 3. 解析参数
     args = parser.parse_args()
@@ -107,7 +116,7 @@ def reconstruct(model, x, device, dataset_type='MNIST'):
     x_cat = (x_cat.clip(0, 1) * 255).cpu().numpy().astype(np.uint8)
     if dataset_type == 'CelebA' or dataset_type == 'CelebAHQ':
         x_cat = cv2.cvtColor(x_cat, cv2.COLOR_RGB2BGR)
-    cv2.imwrite(f'./vqvae_reconstruct_{dataset_type}.jpg', x_cat)
+    cv2.imwrite(f'{cur_dir}/vqvae_reconstruct_{dataset_type}.jpg', x_cat)
 
 
 if __name__ == '__main__':
@@ -127,25 +136,33 @@ if __name__ == '__main__':
     decay = 0.99
     learning_rate = 1e-3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model_version = args.model_version
+    
     print("\n" + "=" * 60)
     print("Running on %s" % device)
     print("Training VQVAE")
+    print(f"model_version: {model_version}")
     print("=" * 60)
-
-    model = VQVAEModel(1, 1, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
-
-    # model_2 = VQVAEModelV2(1, 32, 32).to(device)
-
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
-
-    train_loader, _, = get_mnist_dataloader(batch_size)
-    train_vqvae(model, train_loader, epoch, optimizer, device, 1.0)
     
-    # train_vqvae_2(model_2, train_loader, device, optimizer, epoch)
-    # img, _ = next(iter(train_loader))
-    # img = img.to(device)
-    # print("img.shape:", img.shape)
-    # reconstruct(model_2, img, device, dataset_type='MNIST')
+    train_loader, _, = get_mnist_dataloader(batch_size)
+    
+    if model_version == 'v1':
+        model = VQVAEModel(1, 1, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
+        train_vqvae(model, train_loader, epoch, optimizer, device, 1.0)
+    else:
+        model = VQVAEModelV2(1, 32, 32).to(device)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
+        train_vqvae_2(model, train_loader, device, optimizer, epoch)
+        
+        img, _ = next(iter(train_loader))
+        img = img.to(device)
+        print("img.shape:", img.shape)
+        reconstruct(model, img, device, dataset_type='MNIST')
+
+    
+    
+    
 
     # train_loader, test_loader, data_variance = get_cifar10_dataloader(batch_size, data_path='/Users/bytedance/Downloads/dataset_for_dl/cifar-10')
     # train_vqvae(model, train_loader, epoch, optimizer, device, data_variance)
