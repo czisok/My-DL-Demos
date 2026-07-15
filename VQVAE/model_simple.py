@@ -31,7 +31,7 @@ class ResidualBlock(nn.Module):
 
 class VQVAEModelV2(nn.Module):
     """
-        简易版 VQVAE
+        简易版 VQVAE, 用于 MNIST 数据集
     """
     def __init__(self, input_dim, dim, n_embedding):
         super().__init__()
