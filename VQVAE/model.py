@@ -322,8 +322,19 @@ class Decoder(nn.Module):
 
 class VQVAEModel(nn.Module):
     def __init__(self, input_dim, out_channels, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay=0):
+        """_summary_
+        Args:
+            input_dim (_type_): 输入通道数
+            out_channels (_type_): 输出通道数
+            num_hiddens (_type_): 编码器输出emb维度 , z_e
+            num_residual_layers (_type_): _description_
+            num_residual_hiddens (_type_): _description_
+            num_embeddings (_type_): _description_
+            embedding_dim (_type_): _description_
+            commitment_cost (_type_): _description_
+            decay (int, optional): _description_. Defaults to 0.
+        """
         super(VQVAEModel, self).__init__()
-
         self._encoder = Encoder(input_dim, num_hiddens, num_residual_layers, num_residual_hiddens)
         self._pre_vq_conv = nn.Conv2d(in_channels=num_hiddens, out_channels=embedding_dim, kernel_size=1, stride=1)
         if decay > 0.0:

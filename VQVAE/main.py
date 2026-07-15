@@ -13,6 +13,9 @@ import numpy as np
 import argparse
 import json
 import os
+from scipy.signal import savgol_filter
+from my_utils import plt, show_image, show_image_by_array
+from torchvision.utils import make_grid
 
 
 cur_path = os.path.abspath(__file__)
@@ -42,15 +45,15 @@ def restet_global_set(args):
     with open("global_set.json", "w") as f:
         json.dump(config, f, indent=4)
 
-def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
+def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type="MNIST"):
     model.train()
     train_res_recon_error = []
     train_res_perplexity = []
 
     for i in range(epoch):
         s_time = time.time()
-        for idx, (data, _) in enumerate(train_loader):
-            # (data, _) = next(iter(train_loader))  # 由于样本量太大，此处仅训练第一个batch
+        if dataset_type == "cifar10":
+            (data, _) = next(iter(train_loader))  # 由于样本量太大，此处仅训练第一个batch
             data = data.to(device)
             optimizer.zero_grad()
             vq_loss, data_recon, perplexity = model(data)  # vq 损失
@@ -61,6 +64,19 @@ def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
 
             train_res_recon_error.append(recon_error.item())
             train_res_perplexity.append(perplexity.item())
+        else:
+            for idx, (data, _) in enumerate(train_loader):
+                # (data, _) = next(iter(train_loader))  # 由于样本量太大，此处仅训练第一个batch
+                data = data.to(device)
+                optimizer.zero_grad()
+                vq_loss, data_recon, perplexity = model(data)  # vq 损失
+                recon_error = F.mse_loss(data_recon, data) / data_variance  # 重构损失
+                loss = recon_error + vq_loss  # 总损失
+                loss.backward()
+                optimizer.step()
+
+                train_res_recon_error.append(recon_error.item())
+                train_res_perplexity.append(perplexity.item())
         e_time = time.time()
         print('epoch %d, recon_error %.5f, perplexity: %.5f, elapsed %.2f s' % (
                 (i+1),
@@ -76,6 +92,38 @@ def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance):
                 np.mean(train_res_perplexity[-100:]))   # 最近100个batch的perplexity平均值
             )
     return train_res_recon_error, train_res_perplexity
+
+def plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type="MNIST"):
+    train_res_recon_error_smooth = savgol_filter(train_res_recon_error, 201, 7)
+    train_res_perplexity_smooth = savgol_filter(train_res_perplexity, 201, 7)
+    f = plt.figure(figsize=(16,8))
+    ax = f.add_subplot(1,2,1)
+    ax.plot(train_res_recon_error_smooth)
+    ax.set_yscale('log')
+    ax.set_title('Smoothed NMSE.')
+    ax.set_xlabel('iteration')
+
+    ax = f.add_subplot(1,2,2)
+    ax.plot(train_res_perplexity_smooth)
+    ax.set_title('Smoothed Average codebook usage (perplexity).')
+    ax.set_xlabel('iteration')
+    plt.savefig(f"{cur_dir}/training_loss_comparison_{dataset_type}.png", dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f"\nSaved: {cur_dir}/training_loss_comparison_{dataset_type}.png")
+    
+def view_restruct_v1(model, data_loader, dataset_type="MNIST"):
+    model.eval()
+    (valid_originals, _) = next(iter(data_loader))
+    valid_originals = valid_originals.to(device)
+
+    vq_output_eval = model._pre_vq_conv(model._encoder(valid_originals))
+    _, valid_quantize, _, _ = model._vq_vae(vq_output_eval)
+    valid_reconstructions = model._decoder(valid_quantize)
+    reconstructions_img = make_grid(valid_reconstructions.cpu().data)+0.5
+    show_image_by_array(reconstructions_img, title="reconstruction", save_path=f"{cur_dir}/vqvae_reconstruct_{dataset_type}.png")
+    original_img = make_grid(valid_originals.cpu().data)+0.5
+    show_image_by_array(original_img, title="original", save_path=f"{cur_dir}/vqvae_original_{dataset_type}.png")
+    plt.close()
 
 
 def train_vqvae_2(model, dataloader, device="cuda", optimizer=None, n_epochs=100, l_w_embedding=1, l_w_commitment=0.25):
@@ -126,7 +174,7 @@ if __name__ == '__main__':
     # 超参数设置
     # =========================================================================
     batch_size = 256
-    epoch = 5  # 15000
+    epoch = 1000  # 15000
     num_hiddens = 128
     num_residual_hiddens = 32
     num_residual_layers = 2
@@ -144,13 +192,17 @@ if __name__ == '__main__':
     print(f"model_version: {model_version}")
     print("=" * 60)
     
-    train_loader, _, = get_mnist_dataloader(batch_size)
+    
     
     if model_version == 'v1':
+        train_loader, test_loader, data_variance = get_cifar10_dataloader(batch_size)
         model = VQVAEModel(1, 1, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
-        train_vqvae(model, train_loader, epoch, optimizer, device, 1.0)
+        train_res_recon_error, train_res_perplexity = train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type="cifar10")
+        plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type="cifar10")
+        view_restruct_v1(model, test_loader, dataset_type="cifar10")
     else:
+        train_loader, _, = get_mnist_dataloader(batch_size)
         model = VQVAEModelV2(1, 32, 32).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
         train_vqvae_2(model, train_loader, device, optimizer, epoch)
