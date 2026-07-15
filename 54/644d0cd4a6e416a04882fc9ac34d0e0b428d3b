@@ -1,0 +1,28 @@
+global_set.json
+  h_89bc17edd88fde 2
+VQVAE/model_simple.py
+  s_d182960051d9ab::t_10f64faf1c3ded 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "54644d0cd4a6e416a04882fc9ac34d0e0b428d3b",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_d182960051d9ab": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-6cfd09af-ea54-486f-b66c-ee78dce368e9",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
