@@ -28,7 +28,7 @@ plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams["font.family"] = ["Heiti TC"] # 字体可调换
 plt.rcParams["axes.unicode_minus"] = False # 解决负号"-"显示方框问题
 
-def show_image(img_path, title="img", figsize=None):
+def show_image(img_path, title="img", figsize=None, save_path=None):
     """
     给定图片路径，展示图片
     """
@@ -41,9 +41,13 @@ def show_image(img_path, title="img", figsize=None):
     plt.axis("off")  # 关闭坐标轴
     plt.title(title)
     plt.show()
+    if save_path is not None:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        print(f"\nSaved: {save_path}")
 
 
-def show_image_by_array(img, title="img", figsize=None):
+def show_image_by_array(img, title="img", figsize=None, save_path=None):
     """
     给定array数据的图片，展示图片
     img: [H, W, C]
@@ -55,9 +59,13 @@ def show_image_by_array(img, title="img", figsize=None):
     plt.axis("off")  # 关闭坐标轴
     plt.title(title)
     plt.show()
+    if save_path is not None:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        print(f"\nSaved: {save_path}")
 
 
-def show_multi_image(imgs, h, w, titles=[], figsize=None):
+def show_multi_image(imgs, h, w, titles=[], figsize=None, save_path=None):
     """
     给定多张array类型的图片，即list(array)，展示图片
     """
@@ -77,3 +85,7 @@ def show_multi_image(imgs, h, w, titles=[], figsize=None):
         ax.set_title(title)
     plt.tight_layout()  # 自动调整间距，防止重叠
     plt.show()
+    if save_path is not None:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        print(f"\nSaved: {save_path}")
