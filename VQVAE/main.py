@@ -114,14 +114,25 @@ def plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type="M
 def view_restruct_v1(model, data_loader, dataset_type="MNIST"):
     model.eval()
     (valid_originals, _) = next(iter(data_loader))
-    valid_originals = valid_originals.to(device)
-
+    valid_originals = valid_originals.to(device)  # [N, C, H, W]
+    
     vq_output_eval = model._pre_vq_conv(model._encoder(valid_originals))
     _, valid_quantize, _, _ = model._vq_vae(vq_output_eval)
-    valid_reconstructions = model._decoder(valid_quantize)
-    reconstructions_img = make_grid(valid_reconstructions.cpu().data)+0.5
+    valid_reconstructions = model._decoder(valid_quantize)  # [N, C, H, W]
+    print("valid_reconstructions shape:", valid_reconstructions.shape)
+    print("valid_quantize shape:", valid_quantize.shape)
+    print("valid_originals shape:", valid_originals.shape)
+    
+    # make_grid: 合并多个图片为一个图片,input: [N, C, H, W]
+    # output: [C, H', W']
+    # H': (n1, n2) * H
+    # W': (n1, n2) * W
+    reconstructions_img = make_grid(valid_reconstructions)+0.5  # [C, H', W']
+    reconstructions_img = reconstructions_img.permute(1, 2, 0).cpu() # [H', W, C]
     show_image_by_array(reconstructions_img, title="reconstruction", save_path=f"{cur_dir}/vqvae_reconstruct_{dataset_type}.png")
-    original_img = make_grid(valid_originals.cpu().data)+0.5
+    
+    original_img = make_grid(valid_originals)+0.5  # [C, H', W']
+    original_img = original_img.permute(1, 2, 0).cpu() # [H', W, C]
     show_image_by_array(original_img, title="original", save_path=f"{cur_dir}/vqvae_original_{dataset_type}.png")
     plt.close()
 
