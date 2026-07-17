@@ -53,7 +53,7 @@ def get_mnist_dataloader(batch_size, data_path=None):
     print("dataloader tupe first is x, second is y")
     print("sample(x) shape:".ljust(40, " ") + str(train_dataset[0][0].shape))
     print("=" * 60)
-    return train_loader, test_loader
+    return train_loader, test_loader, 1.0
 
 
 def get_cifar10_dataloader(batch_size, data_path=None):
