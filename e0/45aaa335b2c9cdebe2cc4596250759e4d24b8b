@@ -1,0 +1,86 @@
+VQVAE/main.py
+  s_bcf049c16bb240::t_3534c4f8143b08 167
+  s_678b8e1687f304::t_d5d4d871d190a5 200
+  s_43ba22be0824a4::t_45384f9afa4481 202
+  h_89bc17edd88fde 29,214,216-218,221,228 gitai:{"mixed_line_ranges":[{"Single":29}],"operations":[]}
+  s_35c764a7e1f579::t_9204aad637749e 201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e045aaa335b2c9cdebe2cc4596250759e4d24b8b",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_35c764a7e1f579": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-5ff0529c-7e52-460d-a943-8738f64c833a",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_43ba22be0824a4": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-365fad1a-b273-454d-94a8-a0c43c92f4df",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_678b8e1687f304": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-caf4ca01-0391-46f5-b4a1-52a623f77e8c",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_bcf049c16bb240": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7c30ea2a-2931-4308-87d0-7a7821bc7b63",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {
+    "VQVAE/main.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 29
+          },
+          {
+            "Single": 214
+          },
+          {
+            "Range": [
+              216,
+              218
+            ]
+          },
+          {
+            "Single": 221
+          },
+          {
+            "Single": 228
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 29
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
