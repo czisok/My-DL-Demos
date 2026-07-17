@@ -19,6 +19,14 @@ def init_data_root(data_root=None):
         DATA_ROOT_PATH += "/"
     print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
 
+def get_dataloader(batch_size, data_root="", data_type="mnist"):
+    data_path = data_root + data_type + "/"
+    if data_type == "mnist":
+        return get_mnist_dataloader(batch_size, data_path=data_path)
+    elif data_type == "cifar10":
+        return get_cifar10_dataloader(batch_size, data_path=data_path)
+    else:
+        raise ValueError(f"Unknown data type: {data_type}")
 
 def get_mnist_dataloader(batch_size, data_path=None):
     if data_path is None:
