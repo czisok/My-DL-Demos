@@ -26,6 +26,7 @@ def parse_args():
 
     # 2. 添加参数（必填/可选、类型、说明、默认值）
     parser.add_argument("--data_root", type=str, default="./", help="data root path")
+    parser.add_argument("--data_type", type=str, default="mnist", choices=["mnist", "cifar10"],   help="data type")
     parser.add_argument(
         "--model_version", 
         type=str, 
@@ -163,7 +164,7 @@ def train_vqvae_2(model, dataloader, device="cuda", optimizer=None, n_epochs=100
     print("Done")
 
 
-def reconstruct(model, x, device, dataset_type='MNIST'):
+def reconstruct(model, x, device, dataset_type='mnist'):
     model.to(device)
     model.eval()
     with torch.no_grad():
@@ -196,6 +197,9 @@ if __name__ == '__main__':
     learning_rate = 1e-3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_version = args.model_version
+    data_type = args.data_type.lower().strip().replace("-", "").replace("_", "")  # cifar-10 -> cifar10
+    input_channels = 1 if data_type == "mnist" else 3
+    output_channels = 1 if data_type == "mnist" else 3
     
     print("\n" + "=" * 60)
     print("Running on %s" % device)
@@ -207,21 +211,21 @@ if __name__ == '__main__':
     
     if model_version == 'v1':
         train_loader, test_loader, data_variance = get_cifar10_dataloader(batch_size)
-        model = VQVAEModel(1, 1, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
+        model = VQVAEModel(input_channels, output_channels, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
-        train_res_recon_error, train_res_perplexity = train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type="cifar10")
-        plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type="cifar10")
-        view_restruct_v1(model, test_loader, dataset_type="cifar10")
+        train_res_recon_error, train_res_perplexity = train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type=data_type)
+        plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type=data_type)
+        view_restruct_v1(model, test_loader, dataset_type=data_type)
     else:
         train_loader, _, = get_mnist_dataloader(batch_size)
-        model = VQVAEModelV2(1, 32, 32).to(device)
+        model = VQVAEModelV2(input_channels, 32, 32).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
         train_vqvae_2(model, train_loader, device, optimizer, epoch)
         
         img, _ = next(iter(train_loader))
         img = img.to(device)
         print("img.shape:", img.shape)
-        reconstruct(model, img, device, dataset_type='MNIST')
+        reconstruct(model, img, device, dataset_type=data_type)
 
     
     
