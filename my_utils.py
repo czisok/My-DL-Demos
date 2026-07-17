@@ -2,7 +2,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
 from matplotlib.font_manager import FontProperties, FontManager
-
+import os
 """
 # 1.中文显示问题
 ## Linux中可以用：fc-list :lang=zh 查看所有中文字体，选择一个字体，例如：Source Han Serif CN Heavy
@@ -25,8 +25,24 @@ plt.rcParams["font.family"] = font_name
 plt.rcParams["axes.unicode_minus"] = False
 """
 
-plt.rcParams["font.family"] = ["Heiti TC"] # 字体可调换
-plt.rcParams["axes.unicode_minus"] = False # 解决负号"-"显示方框问题
+# plt.rcParams["font.family"] = ["Heiti TC"] # 字体可调换
+# plt.rcParams["axes.unicode_minus"] = False # 解决负号"-"显示方框问题
+
+
+cur_path = os.path.abspath(__file__)
+cur_dir = os.path.dirname(cur_path)
+otf_path = cur_dir + "/font_ttf/SourceHanSerifCN-Heavy.ttf"
+
+print("字体路径 : %s" % otf_path)
+# 加载字体并注册
+fm = FontManager()
+fm.addfont(otf_path)
+# 提取字体名并设为全局字体
+fp = FontProperties(fname=otf_path)
+font_name = fp.get_name()
+plt.rcParams["font.family"] = font_name
+plt.rcParams["axes.unicode_minus"] = False
+
 
 def show_image(img_path, title="img", figsize=None, save_path=None):
     """
