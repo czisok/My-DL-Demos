@@ -1,0 +1,87 @@
+data_utils.py
+  s_307c69f560bf0f::t_1b6aff2ab04528 24,26,28-29
+  s_f296b780fc64e1::t_bb23f438637afa 22
+  h_89bc17edd88fde 25,27 gitai:{"mixed_line_ranges":[{"Single":25},{"Single":27}],"operations":[]}
+  s_2827467ca56a25::t_c42ecc057c4564 23
+VQVAE/main.py
+  s_cbfb023819994c::t_b91647b7e2345b 214
+  s_3c5ca4f5cca644::t_92ecca5d23bd30 221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "eab837a7619e9cc179432b7d2a1c029215b243c6",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_2827467ca56a25": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-674c5c19-1045-43a3-b343-3d0abdf07adb",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_307c69f560bf0f": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-aaed9859-8ca9-48d8-bf36-c4a6f3627d15",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_3c5ca4f5cca644": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-37357cad-b095-48eb-a87b-8d32555f8ac3",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_cbfb023819994c": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-9b97eb58-32ed-4c1d-a91f-34bb3032a17d",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f296b780fc64e1": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-283d5bab-41e2-4d10-bb8a-feb768ca2749",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {
+    "data_utils.py": [
+      {
+        "hash": "h_89bc17edd88fde",
+        "line_ranges": [
+          {
+            "Single": 25
+          },
+          {
+            "Single": 27
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 25
+          },
+          {
+            "Single": 27
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
