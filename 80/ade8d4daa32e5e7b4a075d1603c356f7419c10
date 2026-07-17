@@ -1,0 +1,16 @@
+my_utils.py
+  h_89bc17edd88fde 5,28-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "80ade8d4daa32e5e7b4a075d1603c356f7419c10",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
