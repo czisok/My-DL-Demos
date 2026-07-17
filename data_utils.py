@@ -42,6 +42,8 @@ def get_mnist_dataloader(batch_size, data_path=None):
         root=data_path, train=False, download=True, transform=transform
     )
 
+    data_variance = np.var(train_dataset.data / 255.0)
+
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     # data info
@@ -52,8 +54,9 @@ def get_mnist_dataloader(batch_size, data_path=None):
     print("test samples:".ljust(40, " ") + "%d" % len(test_dataset))
     print("dataloader tupe first is x, second is y")
     print("sample(x) shape:".ljust(40, " ") + str(train_dataset[0][0].shape))
+    print("data_variance:".ljust(40, " ") + "%.6f" % data_variance)
     print("=" * 60)
-    return train_loader, test_loader, 1.0
+    return train_loader, test_loader, data_variance
 
 
 def get_cifar10_dataloader(batch_size, data_path=None):
