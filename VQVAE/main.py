@@ -1,10 +1,11 @@
+from data_utils import get_mnist_dataloader
 import torch
 import torch.nn.functional as F
 import numpy as np
 from VQVAE.model import VQVAEModel
 from VQVAE.model_simple import VQVAEModelV2
 import torch.optim as optim
-from data_utils import get_cifar10_dataloader, get_mnist_dataloader, DATA_ROOT_PATH, init_data_root
+from data_utils import get_dataloader, DATA_ROOT_PATH, init_data_root
 import time
 import torch.nn as nn
 import einops
@@ -210,14 +211,14 @@ if __name__ == '__main__':
     
     
     if model_version == 'v1':
-        train_loader, test_loader, data_variance = get_cifar10_dataloader(batch_size)
+        train_loader, test_loader, data_variance = get_dataloader(batch_size, data_root=args.data_root, data_type=data_type)
         model = VQVAEModel(input_channels, output_channels, num_hiddens, num_residual_layers, num_residual_hiddens, num_embeddings, embedding_dim, commitment_cost, decay).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
         train_res_recon_error, train_res_perplexity = train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type=data_type)
         plot_train_loss(train_res_recon_error, train_res_perplexity, dataset_type=data_type)
         view_restruct_v1(model, test_loader, dataset_type=data_type)
     else:
-        train_loader, _, = get_mnist_dataloader(batch_size)
+        train_loader, _, = get_dataloader(batch_size, data_root=args.data_root, data_type=data_type)
         model = VQVAEModelV2(input_channels, 32, 32).to(device)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, amsgrad=False)
         train_vqvae_2(model, train_loader, device, optimizer, epoch)
