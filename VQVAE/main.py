@@ -5,7 +5,7 @@ import numpy as np
 from VQVAE.model import VQVAEModel
 from VQVAE.model_simple import VQVAEModelV2
 import torch.optim as optim
-from data_utils import get_dataloader, DATA_ROOT_PATH, init_data_root
+from data_utils import get_dataloader
 import time
 import torch.nn as nn
 import einops
@@ -40,12 +40,12 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def restet_global_set(args):
-    with open("global_set.json", "r") as f:
-        config = json.load(f)
-    config['data_root'] = args.data_root
-    with open("global_set.json", "w") as f:
-        json.dump(config, f, indent=4)
+# def restet_global_set(args):
+#     with open("global_set.json", "r") as f:
+#         config = json.load(f)
+#     config['data_root'] = args.data_root
+#     with open("global_set.json", "w") as f:
+#         json.dump(config, f, indent=4)
 
 def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, dataset_type="MNIST"):
     model.train()
@@ -182,7 +182,6 @@ def reconstruct(model, x, device, dataset_type='mnist'):
 
 if __name__ == '__main__':
     args = parse_args()
-    init_data_root(args.data_root)
     # =========================================================================
     # 超参数设置
     # =========================================================================
