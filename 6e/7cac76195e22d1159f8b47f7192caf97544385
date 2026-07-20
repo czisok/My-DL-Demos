@@ -1,0 +1,48 @@
+VQVAE/main.py
+  h_89bc17edd88fde 43-48
+data_utils.py
+  s_f8ae554e21cd8a::t_cd96b6ec4b15ff 39
+  s_2d447d1a515975::t_b64d80c1c8a0dd 42
+  h_89bc17edd88fde 9,12-22,27,29
+  s_dc68d056120eb2::t_27c53d0db2d79f 25
+  s_f8ae554e21cd8a::t_a632f4690553a1 36-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6e7cac76195e22d1159f8b47f7192caf97544385",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_2d447d1a515975": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-0b40d8a5-295c-40d4-8e2d-7314959ad9ec",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_dc68d056120eb2": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-492a6987-30a0-4e31-905f-f6471f833f9a",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_f8ae554e21cd8a": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-ae32d14f-02e4-4145-8965-edb113c309c8",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
