@@ -1,36 +1,47 @@
 
+from huggingface_hub import list_datasets
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import numpy as np
 import json
+import os
 
-DATA_ROOT_PATH = None
+# DATA_ROOT_PATH = None
 
 
-def init_data_root(data_root=None):
-    global DATA_ROOT_PATH
-    if data_root is not None:
-        DATA_ROOT_PATH = data_root
-    else:
-        with open("global_set.json", "r") as f:
-            config = json.load(f)
-        DATA_ROOT_PATH = config['data_root']
-    if not DATA_ROOT_PATH.endswith("/"):
-        DATA_ROOT_PATH += "/"
-    print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
+# def init_data_root(data_root=None):
+#     global DATA_ROOT_PATH
+#     if data_root is not None:
+#         DATA_ROOT_PATH = data_root
+#     else:
+#         with open("global_set.json", "r") as f:
+#             config = json.load(f)
+#         DATA_ROOT_PATH = config['data_root']
+#     if not DATA_ROOT_PATH.endswith("/"):
+#         DATA_ROOT_PATH += "/"
+#     print("\n" + "*" * 10 + "DATA_ROOT_PATH: %s" % DATA_ROOT_PATH + "*" * 10 + "\n")
 
 def get_dataloader(batch_size, data_root="", data_type="mnist"):
-    data_path = data_root + data_type + "/"
+    data_path = os.path.join(data_root, data_type )
     if data_type == "mnist":
-        return get_mnist_dataloader(batch_size, data_path=data_path)
+        train_loader, test_loader, data_variance = get_mnist_dataloader(batch_size, data_path=data_path)
     elif data_type == "cifar10":
-        return get_cifar10_dataloader(batch_size, data_path=data_path)
+        train_loader, test_loader, data_variance = get_cifar10_dataloader(batch_size, data_path=data_path)
     else:
         raise ValueError(f"Unknown data type: {data_type}")
+    # data info
+    print("=" * 60)
+    print("data loader info: ")
+    print("data_type:".ljust(40, " ") + data_type)
+    print("train samples:".ljust(40, " ") + "%d" % len(train_loader.dataset))
+    print("test samples:".ljust(40, " ") + "%d" % len(test_loader.dataset))
+    print("dataloader tupe first is x, second is y")
+    print("sample(x) shape:".ljust(40, " ") + str(train_loader.dataset[0][0].shape))
+    print("data_variance:".ljust(40, " ") + "%.6f" % data_variance)
+    print("=" * 60)
+    return train_loader, test_loader, data_variance
 
 def get_mnist_dataloader(batch_size, data_path=None):
-    if data_path is None:
-        data_path = DATA_ROOT_PATH + "mnist/"
     transform = transforms.Compose([
         transforms.ToTensor(),  # 将像素值归一化到 [0, 1]
     ])
@@ -46,22 +57,11 @@ def get_mnist_dataloader(batch_size, data_path=None):
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-    # data info
-    print("=" * 60)
-    print("data loader info: ")
-    print("data_type:".ljust(40, " ") + "MNIST")
-    print("train samples:".ljust(40, " ") + "%d" % len(train_dataset))
-    print("test samples:".ljust(40, " ") + "%d" % len(test_dataset))
-    print("dataloader tupe first is x, second is y")
-    print("sample(x) shape:".ljust(40, " ") + str(train_dataset[0][0].shape))
-    print("data_variance:".ljust(40, " ") + "%.6f" % data_variance)
-    print("=" * 60)
+    
     return train_loader, test_loader, data_variance
 
 
 def get_cifar10_dataloader(batch_size, data_path=None):
-    if data_path is None:
-        data_path = DATA_ROOT_PATH + "cifar10/"
     # ToTensor 把数值归一化到[0, 1]之间
     # transforms.Normalize((0.5,0.5,0.5), (1.0,1.0,1.0))
     # out = \frac{x - \mu}{\sigma}, 参数分别是三个通道的均值和方差，这样把x由[0, 1]映射到[-0.5, 0.5]之间，均值为0，加速收敛'
