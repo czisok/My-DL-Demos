@@ -31,7 +31,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 cur_path = os.path.abspath(__file__)
 cur_dir = os.path.dirname(cur_path)
-otf_path = cur_dir + "/font_ttf/SourceHanSerifCN-Heavy.ttf"
+otf_path = cur_dir + "/font/SourceHanSerifCN-Heavy.ttf"
 
 print("字体路径 : %s" % otf_path)
 # 加载字体并注册
