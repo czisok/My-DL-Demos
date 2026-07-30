@@ -53,7 +53,7 @@ def get_mnist_dataloader(batch_size, data_path=None):
         root=data_path, train=False, download=True, transform=transform
     )
 
-    data_variance = np.var(train_dataset.data / 255.0)
+    data_variance = np.var(train_dataset.data.numpy() / 255.0)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)

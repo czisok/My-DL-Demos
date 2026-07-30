@@ -68,7 +68,6 @@ def train_vqvae(model, train_loader, epoch, optimizer, device, data_variance, da
             train_res_perplexity.append(perplexity.item())
         else:
             for idx, (data, _) in enumerate(train_loader):
-                # (data, _) = next(iter(train_loader))  # 由于样本量太大，此处仅训练第一个batch
                 data = data.to(device)
                 optimizer.zero_grad()
                 vq_loss, data_recon, perplexity = model(data)  # vq 损失
@@ -205,6 +204,7 @@ if __name__ == '__main__':
     print("Running on %s" % device)
     print("Training VQVAE")
     print(f"model_version: {model_version}")
+    print(f"train epoch: {epoch}")
     print("=" * 60)
     
     
