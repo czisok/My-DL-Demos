@@ -1,19 +1,17 @@
 #!/bin/bash
 
 # ====================== 配置项 ======================
-# 单文件最大允许字节 20MB =20*1024*1024
 MAX_FILE_SIZE=$((20 * 1024 * 1024))
-# 跳过检测的文件后缀，空格分隔
 SKIP_SUFFIX=".gitignore .md .txt"
 # ====================================================
 
 has_big_file=0
 
-# 改用 while read，解决文件名含空格/中文乱码问题
-git diff --cached --name-only --diff-filter=ACM -z | while IFS= read -r -d '' f
+# 进程替换 < <() ，保留NULL分隔符，不走子shell，不丢失\0
+while IFS= read -r -d '' f
 do
-    # 文件已被删除，跳过
-    if [ ! -e "$f" ]; then
+    [[ -z "$f" ]] && continue
+    if [[ ! -e "$f" ]]; then
         continue
     fi
 
@@ -25,51 +23,29 @@ do
             break
         fi
     done
-    if [ $skip -eq 1 ];then
-        continue
-    fi
+    [[ $skip -eq 1 ]] && continue
 
-    # 兼容 Linux / macOS 获取文件字节
-    if stat --version 2>/dev/null | grep -q GNU; then
+    # stat兼容 Linux(GNU) / Mac(BSD)
+    if stat --version 2>/dev/null | grep -q "GNU coreutils"; then
         filesize=$(stat -c%s "$f")
     else
         filesize=$(stat -f%z "$f")
     fi
 
-    if [ "$filesize" -gt "$MAX_FILE_SIZE" ];then
-        size_mb=$((filesize / 1024 / 1024))
+    if (( filesize > MAX_FILE_SIZE )); then
+        size_mb=$(( filesize / 1024 / 1024 ))
         echo "######################################################################"
-        echo "❌ 拒绝提交：文件【$f】过大！大小 ${size_mb}MB，最大允许 $((MAX_FILE_SIZE/1024/1024))MB"
+        printf "❌ 拒绝提交：文件【%s】过大！大小 %dMB，最大允许 %dMB\n" "$f" "$size_mb" $((MAX_FILE_SIZE/1024/1024))
         echo "👉 不要把大模型、数据集、压缩包提交进git！"
         echo "👉 请把该文件加入 .gitignore，使用rsync/scp单独传输文件"
         echo "######################################################################"
         has_big_file=1
     fi
-done
 
-# 注意：管道内变量无法传出，改用文件标记
-MARK_FILE=".hook_bigfile_mark.tmp"
-[ -f "$MARK_FILE" ] && rm -f "$MARK_FILE"
+done < <(git diff --cached --name-only --diff-filter=ACM -z)
 
-git diff --cached --name-only --diff-filter=ACM -z | while IFS= read -r -d '' f
-do
-    if [ ! -e "$f" ]; then continue; fi
-    skip=0
-    for suf in $SKIP_SUFFIX; do [[ "$f" == *"$suf" ]] && { skip=1;break;}; done
-    [ $skip -eq 1 ] && continue
 
-    if stat --version 2>/dev/null | grep -q GNU; then
-        filesize=$(stat -c%s "$f")
-    else
-        filesize=$(stat -f%z "$f")
-    fi
-    if [ "$filesize" -gt "$MAX_FILE_SIZE" ];then
-        echo 1 > "$MARK_FILE"
-    fi
-done
-
-if [ -f "$MARK_FILE" ];then
-    rm -f "$MARK_FILE"
+if (( has_big_file )); then
     echo
     echo "🔴 commit终止，请处理上面的大文件后再提交"
     exit 1
