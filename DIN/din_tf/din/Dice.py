@@ -3,8 +3,12 @@ import tensorflow as tf
 
 def dice(_x, axis=-1, epsilon=0.000000001, name=''):
     with tf.variable_scope(name_or_scope='', reuse=tf.AUTO_REUSE):
-        alphas = tf.get_variable('alpha'+name, _x.get_shape()[-1], initializer=tf.constant_initializer(0.0), dtype=tf.float32)
-        beta = tf.get_variable('beta'+name, _x.get_shape()[-1], initializer=tf.constant_initializer(0.0), dtype=tf.float32)
+        alphas = tf.get_variable('alpha'+name, _x.get_shape()[-1],
+                                 initializer=tf.constant_initializer(0.0),
+                                 dtype=tf.float32)
+        beta = tf.get_variable('beta'+name, _x.get_shape()[-1],
+                               initializer=tf.constant_initializer(0.0),
+                               dtype=tf.float32)
     input_shape = list(_x.get_shape())
 
     reduction_axes = list(range(len(input_shape)))
@@ -27,7 +31,9 @@ def dice(_x, axis=-1, epsilon=0.000000001, name=''):
 
 def parametric_relu(_x):
     with tf.variable_scope(name_or_scope='', reuse=tf.AUTO_REUSE):
-        alphas = tf.get_variable('alpha', _x.get_shape()[-1], initializer=tf.constant_initializer(0.0), dtype=tf.float32)
+        alphas = tf.get_variable('alpha', _x.get_shape()[-1],
+                                 initializer=tf.constant_initializer(0.0),
+                                 dtype=tf.float32)
     pos = tf.nn.relu(_x)
     neg = alphas * (_x - abs(_x)) * 0.5
 

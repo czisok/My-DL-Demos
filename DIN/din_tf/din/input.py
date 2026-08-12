@@ -14,12 +14,13 @@ class DataInput:
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def next(self):
 
         if self.i == self.epoch_size:
             raise StopIteration
 
-        ts = self.data[self.i * self.batch_size: min((self.i+1) * self.batch_size, len(self.data))]
+        ts = self.data[self.i * self.batch_size: min((self.i+1) * self.batch_size,
+                                                     len(self.data))]
         self.i += 1
 
         u, i, y, sl = [], [], [], []
@@ -54,12 +55,13 @@ class DataInputTest:
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def next(self):
 
         if self.i == self.epoch_size:
             raise StopIteration
 
-        ts = self.data[self.i * self.batch_size: min((self.i+1) * self.batch_size, len(self.data))]
+        ts = self.data[self.i * self.batch_size: min((self.i+1) * self.batch_size,
+                                                     len(self.data))]
         self.i += 1
 
         u, i, j, sl = [], [], [], []
