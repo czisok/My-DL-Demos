@@ -1,7 +1,9 @@
+from __future__ import annotations
 import pickle
+from typing import List, Dict
+
 import torch
 from torch.utils.data import Dataset, DataLoader
-from typing import List, Dict
 
 # ===================== 1. 自定义 AmazonReview Dataset =====================
 class AmazonReviewDataset(Dataset):

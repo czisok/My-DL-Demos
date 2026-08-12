@@ -1,7 +1,9 @@
-import torch
-import torch.nn.functional as F
+from __future__ import annotations
 import math
 from typing import List
+
+import torch
+import torch.nn.functional as F
 
 
 def sequence_mask(
