@@ -14,7 +14,7 @@ class DataInput:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
 
         if self.i == self.epoch_size:
             raise StopIteration
@@ -55,7 +55,7 @@ class DataInputTest:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
 
         if self.i == self.epoch_size:
             raise StopIteration
