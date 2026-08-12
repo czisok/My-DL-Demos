@@ -28,3 +28,9 @@ __pycache__/
 #data
 **/data/
 dataset/
+**/nohup.out
+nohup.out
+ipynb_checkpoints/
+**/ipynb_checkpoints/
+save_path/
+**/save_path/
