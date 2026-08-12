@@ -18,7 +18,8 @@ test_batch_size = 512
 predict_batch_size = 32
 predict_users_num = 1000
 predict_ads_num = 100
-data_path = '/Users/bytedance/Downloads/dataset_for_dl/amazon_review_data/amazon_2014/data_for_din/electronics_dataset.pkl'
+# data_path = '/Users/bytedance/Downloads/dataset_for_dl/amazon_review_data/amazon_2014/data_for_din/electronics_dataset.pkl'
+data_path = '/home/zhangbo.999/jupyter_workspace/dataset/amazon_review_data/amazon_2014/din_raw_data/electronics_dataset.pkl'
 with open(data_path, 'rb') as f:
     train_set = pickle.load(f)
     test_set = pickle.load(f)
