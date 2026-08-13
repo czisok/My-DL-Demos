@@ -31,8 +31,8 @@ __pycache__/
 dataset/
 **/nohup.out
 nohup.out
-ipynb_checkpoints/
-**/ipynb_checkpoints/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 save_path/
 **/save_path/
 *.log
