@@ -48,6 +48,7 @@ class Model(object):
         ], axis=2)
 
         hist_i = attention(i_emb, h_emb, self.sl)
+        print("hist_i shape after attention:", hist_i.get_shape().as_list())
         # -- attention end ---
 
         hist_i = tf.compat.v1.layers.batch_normalization(inputs=hist_i)
