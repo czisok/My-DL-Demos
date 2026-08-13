@@ -8,7 +8,7 @@ import sys
 from input import DataInput, DataInputTest
 from model import Model
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 random.seed(1234)
 np.random.seed(1234)
 tf.set_random_seed(1234)
@@ -106,7 +106,19 @@ def _test(sess, model):
 
 
 gpu_options = tf.GPUOptions(allow_growth=True)
-with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+config = tf.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True, log_device_placement=False)
+with tf.Session(config=config) as sess:
+
+    print('=== TF Environment Info ===')
+    print('TF version:', tf.__version__)
+    print('Built with CUDA:', tf.test.is_built_with_cuda())
+    gpu_name = tf.test.gpu_device_name()
+    print('GPU device name:', gpu_name if gpu_name else '(NO GPU DETECTED — running on CPU)')
+    devices = sess.list_devices()
+    for d in devices:
+        print('  -', d.name, d.device_type)
+    print('===========================')
+    sys.stdout.flush()
 
     model = Model(user_count, item_count, cate_count, cate_list, predict_batch_size, predict_ads_num)
     sess.run(tf.global_variables_initializer())
