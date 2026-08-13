@@ -3,6 +3,7 @@ import math
 from typing import List
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 
@@ -118,3 +119,70 @@ def clip_by_global_norm_tf_(params, clip_norm: float, norm_type: float = 2.0) ->
                 g.mul_(scale)
 
     return float(global_norm)
+
+
+_NEG_INF = -(2.0 ** 32) + 1.0
+
+
+class DINAttention(nn.Module):
+    def __init__(self, hidden: int, d1: int = 80, d2: int = 40):
+        super().__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(4 * hidden, d1),
+            nn.Sigmoid(),
+            nn.Linear(d1, d2),
+            nn.Sigmoid(),
+            nn.Linear(d2, 1),
+        )
+        self.hidden = hidden
+
+    def forward(self, queries: torch.Tensor, keys: torch.Tensor, keys_length: torch.Tensor) -> torch.Tensor:
+        B, T, H = keys.shape
+        q = queries.unsqueeze(1).expand(-1, T, -1).contiguous()
+        din_all = torch.cat([q, keys, q - keys, q * keys], dim=-1)
+        scores = self.mlp(din_all).view(B, 1, T)
+
+        mask = sequence_mask(keys_length, maxlen=T, dtype=torch.bool, device=keys.device).unsqueeze(1)
+        scores = scores.masked_fill(~mask, _NEG_INF)
+        scores = scores / math.sqrt(H)
+        weights = F.softmax(scores, dim=-1)
+        output = torch.bmm(weights, keys)
+        return output
+
+
+def scaled_dot_product_attention(
+    queries: torch.Tensor,
+    keys: torch.Tensor,
+    keys_length: torch.Tensor,
+) -> torch.Tensor:
+    B, T, H = keys.shape
+    q = queries.unsqueeze(1)
+    scores = torch.bmm(q, keys.transpose(1, 2))
+
+    mask = sequence_mask(keys_length, maxlen=T, dtype=torch.bool, device=keys.device).unsqueeze(1)
+    scores = scores.masked_fill(~mask, _NEG_INF)
+    scores = scores / math.sqrt(H)
+    weights = F.softmax(scores, dim=-1)
+    output = torch.bmm(weights, keys)
+    return output
+
+
+if __name__ == '__main__':
+    B, T, H = 3, 5, 128
+
+    torch.manual_seed(0)
+    queries = torch.randn(B, H)
+    keys = torch.randn(B, T, H)
+    keys_length = torch.tensor([2, 5, 3], dtype=torch.long)
+
+    attn_din = DINAttention(hidden=H)
+    out_din = attn_din(queries, keys, keys_length)
+    print('DINAttention output shape:', tuple(out_din.shape))
+
+    out_sd = scaled_dot_product_attention(queries, keys, keys_length)
+    print('ScaledDotProduct output shape:', tuple(out_sd.shape))
+
+    assert out_din.shape == (B, 1, H)
+    assert out_sd.shape == (B, 1, H)
+    print('Shapes OK.')
+
