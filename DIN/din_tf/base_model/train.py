@@ -3,15 +3,19 @@ import time
 import pickle
 import random
 import numpy as np
-import tensorflow as tf
 import sys
+import tensorflow as tf
+
+tf.compat.v1.disable_eager_execution()
+tf.compat.v1.disable_v2_behavior()
+
 from input import DataInput, DataInputTest
 from model import Model
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 random.seed(1234)
 np.random.seed(1234)
-tf.set_random_seed(1234)
+tf.compat.v1.set_random_seed(1234)
 
 train_batch_size = 32
 test_batch_size = 512
@@ -82,12 +86,25 @@ def _eval(sess, model):
   return test_gauc, Auc
 
 
-gpu_options = tf.GPUOptions(allow_growth=True)
-with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+config = tf.compat.v1.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True, log_device_placement=False)
+with tf.compat.v1.Session(config=config) as sess:
+
+  print('=== TF Environment Info ===')
+  print('TF version:', tf.__version__)
+  print('Built with CUDA:', tf.test.is_built_with_cuda())
+  gpu_name = tf.test.gpu_device_name()
+  print('GPU device name:', gpu_name if gpu_name else '(NO GPU DETECTED — running on CPU)')
+  physical_gpus = tf.config.list_physical_devices('GPU')
+  print('Physical GPUs:', physical_gpus if physical_gpus else '(none)')
+  for d in sess.list_devices():
+    print('  -', d.name, d.device_type)
+  print('===========================')
+  sys.stdout.flush()
 
   model = Model(user_count, item_count, cate_count, cate_list)
-  sess.run(tf.global_variables_initializer())
-  sess.run(tf.local_variables_initializer())
+  sess.run(tf.compat.v1.global_variables_initializer())
+  sess.run(tf.compat.v1.local_variables_initializer())
 
   print('test_gauc: %.4f\t test_auc: %.4f' % _eval(sess, model))
   sys.stdout.flush()
