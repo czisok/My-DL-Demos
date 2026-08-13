@@ -15,6 +15,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from data_inputs import load_dataset
 from base_model import MyBaseModel
+from din_model import MyDINModel
 from model_utils import clip_by_global_norm_tf_
 from data_inputs import build_train_dataloader, build_test_dataloader
 import matplotlib
@@ -175,20 +176,41 @@ def save_checkpoint(model: nn.Module, optimizer: optim.Optimizer, epoch: int, gl
     )
 
 
+MODEL_MAP = {
+    'base_model': MyBaseModel,
+    'din': MyDINModel,
+}
+
+
 def main(
+    model_name: str = 'base_model',
     num_epochs: int = 50,
     train_batch_size: int = 32,
     test_batch_size: int = 512,
     base_lr: float = 1.0,            # 对齐 base_model: GradientDescent lr=1.0
     eval_every_steps: int = 1000,    # 对齐 base_model: global_step % 1000 == 0 评估
     lr_decay_step: int = 336000,     # 对齐 base_model: 第 336k step 时 lr *= 0.1
-    save_path: str = 'save_path/ckpt.pt',
+    save_path: str | None = None,
+    dataset_path: str | None = None,
     seed: int = 1234,
     print_every: int = 500,
     grad_clip_norm: float = 5.0,     # 对齐 base_model: clip_by_global_norm(5)
 ):
     """
     多 epoch 训练主函数（对齐 base_model/train.py 的调度逻辑）。
+
+    Args:
+        model_name:   可选 'base_model' / 'din'，分别使用 MyBaseModel / MyDINModel
+        num_epochs:   训练 epoch 数
+        train_batch_size / test_batch_size: 训练/评估 batch
+        base_lr:      初始学习率
+        eval_every_steps: 每多少 global_step 评估 & 存 ckpt 一次
+        lr_decay_step:    在第几步将 lr *= 0.1
+        save_path:    ckpt 保存路径；为 None 时自动用 save_path/{model_name}/ckpt.pt
+        dataset_path: 数据集 .pkl 路径；为 None 时使用模块级 DATASET_PATH（或环境变量 DIN_DATASET_PATH）
+        seed:         全局随机种子
+        print_every:  每多少个 train batch 打印一次进度日志
+        grad_clip_norm: global_norm 裁剪阈值（5 对齐 TF base_model）
 
     调度逻辑对比 base_model：
       • num_epochs = 50 (默认)
@@ -198,30 +220,37 @@ def main(
       • 若 test_gauc > best_auc → torch.save ckpt
       • 每 epoch 结束输出 summary（samples/batches/elapsed/avg_loss/train_auc/best_gauc）
     """
+    if model_name not in MODEL_MAP:
+        raise ValueError(f'model_name={model_name!r} 不合法，可选值: {sorted(MODEL_MAP)}')
+
     set_seed(seed)
 
     os.environ.setdefault('CUDA_VISIBLE_DEVICES', '0')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    data_path = dataset_path or os.environ.get('DIN_DATASET_PATH') or DATASET_PATH
+    if save_path is None:
+        save_path = os.path.join('save_path', model_name, 'ckpt.pt')
+
     print(f'Using device: {device}')
+    print(f'model_name : {model_name}  (class={MODEL_MAP[model_name].__name__})')
+    print(f'save_path  : {save_path}')
 
     # ------------------------------------------------------------------
     # 数据
     # ------------------------------------------------------------------
-    print(f'Loading dataset from: {DATASET_PATH}')
-    if not os.path.exists(DATASET_PATH):
-        print(f'[WARN] 数据集路径不存在：{DATASET_PATH}', file=sys.stderr)
-        print('       请修改 DATASET_PATH 常量或通过环境变量传入正确路径。', file=sys.stderr)
+    print(f'Loading dataset from: {data_path}')
+    if not os.path.exists(data_path):
+        print(f'[WARN] 数据集路径不存在：{data_path}', file=sys.stderr)
+        print('       可通过 --dataset_path 参数、DIN_DATASET_PATH 环境变量，或修改文件内 DATASET_PATH 常量传入正确路径。', file=sys.stderr)
         sys.exit(1)
 
-    train_set, test_set, cate_list, (user_count, item_count, cate_count) = load_dataset(DATASET_PATH)
+    train_set, test_set, cate_list, (user_count, item_count, cate_count) = load_dataset(data_path)
     print(
         f'Loaded: train={len(train_set):,}  test={len(test_set):,}  '
         f'users={user_count:,}  items={item_count:,}  cates={cate_count:,}'
     )
 
-    # 修复#4：DataLoader 不做内部 shuffle，由外层用 Python random.shuffle(train_set) 控制，
-    #        对齐 base_model/train.py：random.seed(1234) 全局初始化一次 → 每个 epoch random.shuffle(train_set)
-    #        → DataInput 按顺序切片生成 batch。这样 SGD 的样本出现序列与 TF 严格一致，避免 RNG 系统差异导致漂移。
     train_loader = build_train_dataloader(train_set, batch_size=train_batch_size, shuffle=False, seed=seed)
     test_loader = build_test_dataloader(test_set, batch_size=test_batch_size, shuffle=False, seed=seed)
 
@@ -229,7 +258,8 @@ def main(
     # 模型 & 优化器（对齐 base_model: SGD + clip_by_global_norm(5)）
     # ------------------------------------------------------------------
     hidden_units = 128
-    model = MyBaseModel(
+    ModelClass = MODEL_MAP[model_name]
+    model = ModelClass(
         u_cnt=user_count,
         i_cnt=item_count,
         cate_cnt=cate_count,
@@ -242,7 +272,7 @@ def main(
     # optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     total_params = sum(p.numel() for p in model.parameters())
-    print(f'Model params: {total_params:,}')
+    print(f'Model class: {ModelClass.__name__}  params: {total_params:,}')
     print(f'Optimizer : {type(optimizer).__name__}  base_lr={base_lr}  clip_norm={grad_clip_norm}')
 
     # ------------------------------------------------------------------
@@ -508,12 +538,54 @@ def main(
     ax.legend(fontsize=10)
 
     plt.tight_layout()
-    save_fig_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'training_curves_dashed.png')
+    save_fig_fname = f'training_curves_dashed_{model_name}.png'
+    save_fig_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), save_fig_fname)
     fig.savefig(save_fig_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f'\n[FIG] 训练曲线（虚线）已保存至: {save_fig_path}')
 
 
+def _parse_args():
+    import argparse
+
+    parser = argparse.ArgumentParser(description='DIN / BaseModel PyTorch training')
+    parser.add_argument(
+        '--model_name',
+        type=str,
+        default='base_model',
+        choices=sorted(MODEL_MAP.keys()),
+        help="选择训练模型：'base_model' → 平均池化基线，'din' → DIN Attention 版（含候选-历史交互打分）",
+    )
+    parser.add_argument('--num_epochs',        type=int,   default=50)
+    parser.add_argument('--train_batch_size',  type=int,   default=32)
+    parser.add_argument('--test_batch_size',   type=int,   default=512)
+    parser.add_argument('--base_lr',           type=float, default=1.0)
+    parser.add_argument('--eval_every_steps',  type=int,   default=1000)
+    parser.add_argument('--lr_decay_step',     type=int,   default=336000)
+    parser.add_argument('--save_path',         type=str,   default=None,
+                        help='ckpt 保存路径（默认 save_path/{model_name}/ckpt.pt）')
+    parser.add_argument('--dataset_path',      type=str,   default=None,
+                        help='数据集 pkl 路径（优先级 > DIN_DATASET_PATH 环境变量 > 文件内 DATASET_PATH 常量）')
+    parser.add_argument('--seed',              type=int,   default=1234)
+    parser.add_argument('--print_every',       type=int,   default=500)
+    parser.add_argument('--grad_clip_norm',    type=float, default=5.0)
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
+    args = _parse_args()
     best_auc = 0.0
-    main()
+    main(
+        model_name=args.model_name,
+        num_epochs=args.num_epochs,
+        train_batch_size=args.train_batch_size,
+        test_batch_size=args.test_batch_size,
+        base_lr=args.base_lr,
+        eval_every_steps=args.eval_every_steps,
+        lr_decay_step=args.lr_decay_step,
+        save_path=args.save_path,
+        dataset_path=args.dataset_path,
+        seed=args.seed,
+        print_every=args.print_every,
+        grad_clip_norm=args.grad_clip_norm,
+    )

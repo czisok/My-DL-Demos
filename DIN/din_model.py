@@ -4,7 +4,7 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from model_utils import sequence_mask
+from model_utils import sequence_mask, scaled_dot_product_attention
 
 
 class MyDINModel(nn.Module):
@@ -49,5 +49,28 @@ class MyDINModel(nn.Module):
                 nn.init.xavier_uniform_(m.weight)
                 nn.init.zeros_(m.bias)
 
-    def forward(self, u, i, hist_i, sl):
-        pass
+    def forward(self, x: Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]) -> torch.Tensor:
+        """
+        Args:
+            x: (uid, iid, hist_i, seq_len)   — y (label) 由外层 loss 计算，不传入 forward
+        Returns:
+            logit: [B, 1]   (未过 sigmoid，配合 BCEWithLogitsLoss；logit = FCN_out + item_b[iid])
+        """
+        uid, iid, hist_i, sl = x
+
+        ic = self.cate_list[iid]
+        hc = self.cate_list[hist_i]
+
+        i_emb = torch.cat([self.iid_embs(iid), self.cate_embs(ic)], dim=1)     # [B, H]
+        h_emb = torch.cat([self.iid_embs(hist_i), self.cate_embs(hc)], dim=-1)  # [B, T, H]
+        h_emb = scaled_dot_product_attention(i_emb, h_emb, sl)
+
+        h_emb = self.hist_bn(h_emb)
+        u_emb = self.h_fc(h_emb)                                                # [B, H]
+
+        mlp_input = torch.cat([u_emb, i_emb, u_emb * i_emb], dim=-1)                            # [B, 2H]  （对齐 TF 版 base_model.Model：仅拼接用户表示和目标物品表示，不含 u*i 交互项）
+        mlp_input = self.i_bn(mlp_input)
+        fcn_out = self.mlp(mlp_input)                                           # [B, 1]
+        # 加上当前 item 的可学习偏置（全局 item 流行度/偏置项，与 base_model 对齐）
+        ib = self.item_b(iid)                                                   # [B, 1]
+        return fcn_out + ib     
