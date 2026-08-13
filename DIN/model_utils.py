@@ -124,7 +124,7 @@ def clip_by_global_norm_tf_(params, clip_norm: float, norm_type: float = 2.0) ->
 _NEG_INF = -(2.0 ** 32) + 1.0
 
 
-class DINAttention(nn.Module):
+class MLPAttention(nn.Module):
     def __init__(self, hidden: int, d1: int = 80, d2: int = 40):
         super().__init__()
         self.mlp = nn.Sequential(
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     keys = torch.randn(B, T, H)
     keys_length = torch.tensor([2, 5, 3], dtype=torch.long)
 
-    attn_din = DINAttention(hidden=H)
+    attn_din = MLPAttention(hidden=H)
     out_din = attn_din(queries, keys, keys_length)
     print('DINAttention output shape:', tuple(out_din.shape))
 
