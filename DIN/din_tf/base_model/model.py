@@ -1,3 +1,5 @@
+import os
+os.environ.setdefault('TF_USE_LEGACY_KERAS', '1')
 import tensorflow as tf
 
 tf.compat.v1.disable_eager_execution()
