@@ -1,32 +1,23 @@
 import os
-os.environ.setdefault('TF_USE_LEGACY_KERAS', '1')
-os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '2')
-os.environ.setdefault('TF_ENABLE_ONEDNN_OPTS', '0')
-
 import time
 import pickle
 import random
 import numpy as np
 import sys
 import tensorflow as tf
-
-tf.compat.v1.disable_eager_execution()
-tf.compat.v1.disable_v2_behavior()
-
 from input import DataInput, DataInputTest
 from model import Model
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 random.seed(1234)
 np.random.seed(1234)
-tf.compat.v1.set_random_seed(1234)
+tf.set_random_seed(1234)
 
 train_batch_size = 32
 test_batch_size = 512
 predict_batch_size = 32
 predict_users_num = 1000
 predict_ads_num = 100
-# data_path = '/Users/bytedance/Downloads/dataset_for_dl/amazon_review_data/amazon_2014/data_for_din/electronics_dataset.pkl'
 data_path = '/home/zhangbo.999/jupyter_workspace/dataset/amazon_review_data/amazon_2014/din_raw_data/electronics_dataset.pkl'
 with open(data_path, 'rb') as f:
     train_set = pickle.load(f)
@@ -38,31 +29,21 @@ best_auc = 0.0
 
 
 def calc_auc(raw_arr):
-    """Summary
-
-    Args:
-        raw_arr (TYPE): Description
-
-    Returns:
-        TYPE: Description
-    """
-    # sort by pred value, from small to big
     arr = sorted(raw_arr, key=lambda d: d[2])
 
     auc = 0.0
     fp1, tp1, fp2, tp2 = 0.0, 0.0, 0.0, 0.0
     for record in arr:
-        fp2 += record[0]  # noclick
-        tp2 += record[1]  # click
+        fp2 += record[0]
+        tp2 += record[1]
         auc += (fp2 - fp1) * (tp2 + tp1)
         fp1, tp1 = fp2, tp2
 
-    # if all nonclick or click, disgard
     threshold = len(arr) - 1e-3
     if tp2 > threshold or fp2 > threshold:
         return -0.5
 
-    if tp2 * fp2 > 0.0:  # normal auc
+    if tp2 * fp2 > 0.0:
         return (1.0 - auc / (2.0 * tp2 * fp2))
     else:
         return None
@@ -71,10 +52,6 @@ def calc_auc(raw_arr):
 def _auc_arr(score):
     score_p = score[:, 0]
     score_n = score[:, 1]
-    # print "============== p ============="
-    # print score_p
-    # print "============== n ============="
-    # print score_n
     score_arr = []
     for s in score_p.tolist():
         score_arr.append([0, 1, s])
@@ -103,7 +80,6 @@ def _test(sess, model):
     auc_sum = 0.0
     score_arr = []
     predicted_users_num = 0
-    print("test sub items")
     for _, uij in DataInputTest(test_set, predict_batch_size):
         if predicted_users_num >= predict_users_num:
             break
@@ -113,25 +89,11 @@ def _test(sess, model):
     return score_[0]
 
 
-gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-config = tf.compat.v1.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True, log_device_placement=False)
-with tf.compat.v1.Session(config=config) as sess:
-
-    print('=== TF Environment Info ===')
-    print('TF version:', tf.__version__)
-    print('Built with CUDA:', tf.test.is_built_with_cuda())
-    gpu_name = tf.test.gpu_device_name()
-    print('GPU device name:', gpu_name if gpu_name else '(NO GPU DETECTED — running on CPU)')
-    physical_gpus = tf.config.list_physical_devices('GPU')
-    print('Physical GPUs:', physical_gpus if physical_gpus else '(none)')
-    for d in sess.list_devices():
-        print('  -', d.name, d.device_type)
-    print('===========================')
-    sys.stdout.flush()
-
+gpu_options = tf.GPUOptions(allow_growth=True)
+with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
     model = Model(user_count, item_count, cate_count, cate_list, predict_batch_size, predict_ads_num)
-    sess.run(tf.compat.v1.global_variables_initializer())
-    sess.run(tf.compat.v1.local_variables_initializer())
+    sess.run(tf.global_variables_initializer())
+    sess.run(tf.local_variables_initializer())
 
     print('test_gauc: %.4f\t test_auc: %.4f' % _eval(sess, model))
     sys.stdout.flush()

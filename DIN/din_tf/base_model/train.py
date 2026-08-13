@@ -1,25 +1,17 @@
 import os
-os.environ.setdefault('TF_USE_LEGACY_KERAS', '1')
-os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '2')
-os.environ.setdefault('TF_ENABLE_ONEDNN_OPTS', '0')
-
 import time
 import pickle
 import random
 import numpy as np
-import sys
 import tensorflow as tf
-
-tf.compat.v1.disable_eager_execution()
-tf.compat.v1.disable_v2_behavior()
-
+import sys
 from input import DataInput, DataInputTest
 from model import Model
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 random.seed(1234)
 np.random.seed(1234)
-tf.compat.v1.set_random_seed(1234)
+tf.set_random_seed(1234)
 
 train_batch_size = 32
 test_batch_size = 512
@@ -32,15 +24,6 @@ with open('dataset.pkl', 'rb') as f:
 
 best_auc = 0.0
 def calc_auc(raw_arr):
-    """Summary
-
-    Args:
-        raw_arr (TYPE): Description
-
-    Returns:
-        TYPE: Description
-    """
-    # sort by pred value, from small to big
     arr = sorted(raw_arr, key=lambda d:d[2])
 
     auc = 0.0
@@ -51,7 +34,6 @@ def calc_auc(raw_arr):
         auc += (fp2 - fp1) * (tp2 + tp1)
         fp1, tp1 = fp2, tp2
 
-    # if all nonclick or click, disgard
     threshold = len(arr) - 1e-3
     if tp2 > threshold or fp2 > threshold:
         return -0.5
@@ -64,10 +46,6 @@ def calc_auc(raw_arr):
 def _auc_arr(score):
   score_p = score[:,0]
   score_n = score[:,1]
-  #print "============== p ============="
-  #print score_p
-  #print "============== n ============="
-  #print score_n
   score_arr = []
   for s in score_p.tolist():
     score_arr.append([0, 1, s])
@@ -90,25 +68,12 @@ def _eval(sess, model):
   return test_gauc, Auc
 
 
-gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-config = tf.compat.v1.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True, log_device_placement=False)
-with tf.compat.v1.Session(config=config) as sess:
-
-  print('=== TF Environment Info ===')
-  print('TF version:', tf.__version__)
-  print('Built with CUDA:', tf.test.is_built_with_cuda())
-  gpu_name = tf.test.gpu_device_name()
-  print('GPU device name:', gpu_name if gpu_name else '(NO GPU DETECTED — running on CPU)')
-  physical_gpus = tf.config.list_physical_devices('GPU')
-  print('Physical GPUs:', physical_gpus if physical_gpus else '(none)')
-  for d in sess.list_devices():
-    print('  -', d.name, d.device_type)
-  print('===========================')
-  sys.stdout.flush()
+gpu_options = tf.GPUOptions(allow_growth=True)
+with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
 
   model = Model(user_count, item_count, cate_count, cate_list)
-  sess.run(tf.compat.v1.global_variables_initializer())
-  sess.run(tf.compat.v1.local_variables_initializer())
+  sess.run(tf.global_variables_initializer())
+  sess.run(tf.local_variables_initializer())
 
   print('test_gauc: %.4f\t test_auc: %.4f' % _eval(sess, model))
   sys.stdout.flush()
