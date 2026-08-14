@@ -43,7 +43,8 @@ class Model(object):
             tf.nn.embedding_lookup(cate_emb_w, hc),
         ], axis=2)
 
-        hist_i = attention(i_emb, h_emb, self.sl)
+        hist_i = attention(i_emb, h_emb, self.sl)  # [B, 1, 128]
+        print("hist_i shape after attention:", hist_i.get_shape().as_list())
 
         hist_i = tf.layers.batch_normalization(inputs=hist_i)
         hist_i = tf.reshape(hist_i, [-1, hidden_units], name='hist_bn')

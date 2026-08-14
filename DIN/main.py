@@ -44,10 +44,6 @@ def _safe_roc_auc(y_true: np.ndarray, y_score: np.ndarray) -> float:
 def _auc_arr(score):
     score_p = score[:, 0]  # score of positive item
     score_n = score[:, 1]  # score of negative item
-    # print "============== p ============="
-    # print score_p
-    # print "============== n ============="
-    # print score_n
     score_arr = []
     for s in score_p.tolist():
         score_arr.append([0, 1, s])  # noclick, click, score

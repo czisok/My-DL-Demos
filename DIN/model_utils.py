@@ -157,7 +157,7 @@ def scaled_dot_product_attention(
 ) -> torch.Tensor:
     B, T, H = keys.shape
     q = queries.unsqueeze(1)
-    scores = torch.bmm(q, keys.transpose(1, 2))
+    scores = torch.bmm(q, keys.transpose(1, 2))  # 
 
     mask = sequence_mask(keys_length, maxlen=T, dtype=torch.bool, device=keys.device).unsqueeze(1)
     scores = scores.masked_fill(~mask, _NEG_INF)

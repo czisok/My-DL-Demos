@@ -35,10 +35,10 @@ class MyDINModel(nn.Module):
         # 修复#1：BN epsilon=1e-3 对齐 tf.layers.batch_normalization 默认值（PyTorch默认1e-5，差100倍）
         self.hist_bn = nn.BatchNorm1d(hidden_units, eps=1e-3, track_running_stats=False)
 
-        self.i_bn = nn.BatchNorm1d(hidden_units * 2, eps=1e-3, track_running_stats=False)
+        self.i_bn = nn.BatchNorm1d(hidden_units * 3, eps=1e-3, track_running_stats=False)
 
         self.mlp = nn.Sequential(
-            nn.Linear(hidden_units * 2, 80),
+            nn.Linear(hidden_units * 3, 80),
             nn.Sigmoid(),
             nn.Linear(80, 40),
             nn.Sigmoid(),
@@ -63,8 +63,9 @@ class MyDINModel(nn.Module):
 
         i_emb = torch.cat([self.iid_embs(iid), self.cate_embs(ic)], dim=1)     # [B, H]
         h_emb = torch.cat([self.iid_embs(hist_i), self.cate_embs(hc)], dim=-1)  # [B, T, H]
-        h_emb = scaled_dot_product_attention(i_emb, h_emb, sl)
-
+        h_emb = scaled_dot_product_attention(i_emb, h_emb, sl)  # [B, 1, H]
+        h_emb = h_emb.squeeze(1)  # [B, H]
+        
         h_emb = self.hist_bn(h_emb)
         u_emb = self.h_fc(h_emb)                                                # [B, H]
 
