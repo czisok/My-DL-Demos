@@ -36,4 +36,4 @@ nohup.out
 save_path/
 **/save_path/
 *.log
-
+**/outputs/
