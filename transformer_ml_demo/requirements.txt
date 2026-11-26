@@ -1,0 +1,7 @@
+torch>=2.2
+datasets>=3.0
+sentencepiece>=0.2.0
+sacrebleu>=2.4
+PyYAML>=6.0
+tqdm>=4.66
+pytest>=8.0

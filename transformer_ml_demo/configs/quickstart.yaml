@@ -1,0 +1,39 @@
+seed: 42
+output_dir: outputs/quickstart
+
+data:
+  dataset_name: Helsinki-NLP/opus-100
+  dataset_config: en-zh
+  source_lang: en
+  target_lang: zh
+  max_train_samples: 2000
+  max_valid_samples: 200
+  max_test_samples: 200
+  max_length: 64
+  vocab_size: 4000
+  min_sentence_length: 1
+  num_workers: 0
+
+model:
+  d_model: 128
+  num_heads: 4
+  num_encoder_layers: 2
+  num_decoder_layers: 2
+  d_ff: 512
+  dropout: 0.1
+  norm_first: false
+
+training:
+  epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0
+  warmup_steps: 400
+  label_smoothing: 0.1
+  grad_clip: 1.0
+  log_every: 10
+  evaluate_bleu_every: 1
+  bleu_max_samples: 100
+  save_every: 1
+  mixed_precision: true
+  device: auto
